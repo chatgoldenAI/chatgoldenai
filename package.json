@@ -3,11 +3,15 @@
   "version": "1.0.0",
   "description": "GoldenChat - GPT-5 Chat Platform by GoldenSpaceAI",
   "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build": "npm install"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -27,14 +31,5 @@
     "nodemon": "^3.0.1",
     "jest": "^29.6.1",
     "eslint": "^8.45.0"
-  },
-  "keywords": [
-    "chat",
-    "ai",
-    "gpt-5",
-    "goldenspaceai",
-    "realtime"
-  ],
-  "author": "GoldenSpaceAI",
-  "license": "MIT"
+  }
 }
