@@ -7,219 +7,189 @@
 <link rel="icon" href="https://goldenspaceai.space/logo.png" />
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-  *{box-sizing:border-box;margin:0;padding:0;font-family:'Cairo',sans-serif;}
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif;}
   body{
-    background:radial-gradient(circle at 50% 20%,#0a1222 0%,#01040a 100%);
-    min-height:100vh;
+    background:radial-gradient(circle at 50% 20%,#02122a 0%,#000308 100%);
     color:#fff;
-    overflow-x:hidden;
-    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
   }
-  /* animated AI lines */
-  body::before{
-    content:"";
-    position:absolute;
-    top:0;left:0;width:200%;height:200%;
-    background:repeating-linear-gradient(120deg,rgba(0,255,255,0.05) 0 2px,transparent 2px 6px);
-    animation:move 15s linear infinite;
-    transform:translate(-25%,-25%) scale(1.2);
-  }
-  @keyframes move{to{background-position:400px 800px;}}
+
   header{
-    position:sticky;top:0;z-index:10;
-    background:rgba(0,0,0,0.3);
-    display:flex;justify-content:space-between;align-items:center;
-    padding:12px 30px;
-    backdrop-filter:blur(12px);
-    border-bottom:1px solid rgba(0,255,255,0.1);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 30px;
+    background:rgba(0,0,0,0.4);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(0,255,255,0.2);
   }
+
   header h1{
-    font-size:26px;
-    letter-spacing:1px;
     background:linear-gradient(90deg,#00c3ff,#3db2ff,#00e1ff);
     -webkit-background-clip:text;
     color:transparent;
-    font-weight:700;
-    text-shadow:0 0 10px rgba(0,255,255,0.4);
-  }
-  .profile{
-    text-align:left;
-    font-size:15px;
-    color:#ccc;
-  }
-  .profile span{color:#3db2ff;font-weight:bold;}
-  .buttons button{
-    background:linear-gradient(90deg,#0066ff,#00d9ff);
-    border:none;color:#fff;padding:8px 16px;border-radius:10px;
-    cursor:pointer;font-weight:bold;margin-left:8px;
-    box-shadow:0 0 10px rgba(0,200,255,0.4);
-    transition:all 0.3s;
-  }
-  .buttons button:hover{transform:translateY(-2px);opacity:0.9;}
-  main{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    min-height:calc(100vh - 120px);
-    position:relative;
-    z-index:2;
-    padding:40px 20px;
-  }
-  h2.section-title{
-    font-size:26px;
-    background:linear-gradient(90deg,#00d9ff,#00ffcc);
-    -webkit-background-clip:text;
-    color:transparent;
-    margin-bottom:40px;
-    text-shadow:0 0 15px rgba(0,255,255,0.3);
-  }
-  .boxes{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:50px;
-  }
-  .box{
-    width:340px;
-    height:360px;
-    background:linear-gradient(160deg,rgba(0,40,80,0.8),rgba(0,0,0,0.6));
-    border:1px solid rgba(0,255,255,0.2);
-    border-radius:24px;
-    padding:30px;
-    box-shadow:0 0 40px rgba(0,180,255,0.15);
-    backdrop-filter:blur(6px);
-    position:relative;
-    overflow:hidden;
-    transition:all 0.4s;
-  }
-  .box::before{
-    content:"";
-    position:absolute;
-    top:-50%;left:-50%;
-    width:200%;height:200%;
-    background:conic-gradient(from 0deg,rgba(0,255,255,0.4),transparent 60%);
-    animation:rotate 6s linear infinite;
-  }
-  @keyframes rotate{to{transform:rotate(360deg);}}
-  .box-content{
-    position:relative;z-index:2;
-    background:rgba(0,0,0,0.65);
-    height:100%;
-    border-radius:18px;
-    padding:25px;
-    display:flex;flex-direction:column;
-    justify-content:space-between;
-  }
-  .box h3{
     font-size:22px;
-    background:linear-gradient(90deg,#00bfff,#00ffff);
-    -webkit-background-clip:text;color:transparent;
-    margin-bottom:10px;
+    text-shadow:0 0 12px rgba(0,255,255,0.3);
   }
-  .box p{font-size:15px;opacity:0.9;}
-  .box button{
-    background:linear-gradient(90deg,#00bfff,#00ffff);
+
+  .login-btn{
+    background:linear-gradient(90deg,#00c3ff,#00ffff);
     border:none;
     color:#000;
-    font-weight:bold;
-    padding:10px 18px;
-    border-radius:10px;
+    padding:10px 16px;
+    border-radius:20px;
+    font-weight:600;
     cursor:pointer;
-    box-shadow:0 0 10px rgba(0,255,255,0.5);
-    transition:all 0.3s;
+    transition:0.3s;
   }
-  .box button:hover{transform:scale(1.05);}
-  footer{
-    padding:25px;
+  .login-btn:hover{transform:scale(1.05);}
+
+  .hero{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
     text-align:center;
-    font-size:13px;
-    color:#aaa;
+    padding:40px 20px;
   }
-  .policies{
-    margin-top:35px;
+
+  .hero h2{
+    font-size:26px;
+    margin-bottom:10px;
+    color:#00e1ff;
+  }
+
+  .hero p{
+    color:#ccc;
+    font-size:16px;
+    max-width:500px;
+    margin-bottom:40px;
+  }
+
+  .features{
     display:flex;
     flex-wrap:wrap;
     justify-content:center;
-    gap:20px;
+    gap:25px;
   }
-  .policies a{
-    color:#00e1ff;
-    font-weight:bold;
-    text-decoration:none;
-    border:1px solid rgba(0,255,255,0.3);
-    padding:6px 12px;
-    border-radius:8px;
-    background:rgba(0,255,255,0.05);
-    transition:all 0.3s;
+
+  .feature{
+    width:260px;
+    background:rgba(0,0,0,0.4);
+    border:1px solid rgba(0,255,255,0.25);
+    border-radius:18px;
+    padding:20px;
+    transition:0.3s;
+    cursor:pointer;
   }
-  .policies a:hover{
-    background:rgba(0,255,255,0.15);
-    box-shadow:0 0 10px rgba(0,255,255,0.4);
+
+  .feature:hover{
+    transform:translateY(-4px);
+    box-shadow:0 0 20px rgba(0,255,255,0.3);
   }
+
+  .feature h3{
+    color:#00ffff;
+    margin-bottom:10px;
+    font-size:18px;
+  }
+
+  .feature p{
+    color:#aaa;
+    font-size:14px;
+  }
+
+  .profile-box{
+    background:rgba(0,0,0,0.5);
+    border:1px solid rgba(0,255,255,0.25);
+    padding:15px 20px;
+    border-radius:15px;
+    margin-top:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:15px;
+  }
+
+  .profile-box img{
+    width:50px;height:50px;
+    border-radius:50%;
+    border:2px solid #00ffff;
+  }
+
+  .profile-box .info{
+    text-align:right;
+  }
+
+  .profile-box .info h4{margin:0;font-size:17px;}
+  .profile-box .info p{margin:0;font-size:14px;color:#00ffff;}
+
+  .buy-btn{
+    background:linear-gradient(90deg,#00ffff,#0099ff);
+    border:none;
+    color:#000;
+    padding:10px 18px;
+    border-radius:20px;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:15px;
+    transition:0.3s;
+  }
+  .buy-btn:hover{transform:scale(1.05);}
 </style>
 </head>
 <body>
-  <header>
-    <h1>GoldenChatAI</h1>
-    <div class="profile">
-      <div>مرحباً، <span id="username">زائر</span></div>
-      <div>رصيدك: <span id="balance">0</span> G</div>
-    </div>
-    <div class="buttons">
-      <button onclick="window.location='/buy-golden.html'">💰 شراء Golden</button>
-      <button onclick="logout()">🚪 تسجيل الخروج</button>
-    </div>
-  </header>
 
-  <main>
-    <h2 class="section-title">اختر نوع الدردشة التي ترغب بها</h2>
-    <div class="boxes">
-      <div class="box">
-        <div class="box-content">
-          <div>
-            <h3>تحدث وتعلم مع الذكاء الاصطناعي</h3>
-            <p>تجربة مجانية للتفاعل مع الذكاء الاصطناعي بلغتك العربية. مناسبة للتعلم والمحادثة اليومية.</p>
-          </div>
-          <button onclick="window.location='goldenchatai-free.html'">ابدأ الآن مجاناً</button>
-        </div>
-      </div>
+<header>
+  <h1>🌐 GoldenChatAI</h1>
+  <button class="login-btn" onclick="window.location.href='login-signup.html'">تسجيل الدخول / إنشاء حساب</button>
+</header>
 
-      <div class="box">
-        <div class="box-content">
-          <div>
-            <h3>الذكاء الاصطناعي المتقدم</h3>
-            <p>نموذج قوي يعمل بـ GPT-5 و Gemini 2.5 Pro، يوفر إنشاء صور وذاكرة محادثة ذكية. التكلفة: 40 G شهرياً.</p>
-          </div>
-          <button onclick="window.location='goldenchatai-advanced.html'">🚀 تفعيل الذكاء المتقدم</button>
-        </div>
-      </div>
+<section class="hero">
+  <h2>ابدأ رحلتك مع الذكاء الاصطناعي بالعربية ✨</h2>
+  <p>استخدم الذكاء الاصطناعي مجانًا للدردشة والتعلّم، أو جرب النسخة المتقدمة لإنشاء الصور والإجابات الذكية عبر نماذج GPT-5 وGemini 2.5 Pro.</p>
+
+  <div class="features">
+    <div class="feature" onclick="window.location.href='goldenchatai-free.html'">
+      <h3>💬 الدردشة المجانية</h3>
+      <p>تحدث مع الذكاء الاصطناعي بالعربية بدون تسجيل دخول، بأسلوب بسيط وسريع.</p>
     </div>
 
-    <div class="policies">
-      <a href="terms.html">📘 شروط الخدمة</a>
-      <a href="privacy.html">🔒 سياسة الخصوصية</a>
-      <a href="refund.html">💰 سياسة الاسترجاع</a>
+    <div class="feature" onclick="window.location.href='goldenchatai-advanced.html'">
+      <h3>🚀 الدردشة المتقدمة</h3>
+      <p>نماذج GPT-5 وGemini 2.5 Pro لإنشاء صور وإجابات احترافية — تتطلب 40G.</p>
     </div>
-  </main>
+  </div>
 
-  <footer>© 2025 GoldenSpaceAI • جميع الحقوق محفوظة</footer>
+  <div class="profile-box" id="profileBox" style="display:none;">
+    <img id="profilePic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User">
+    <div class="info">
+      <h4 id="userName">الاسم</h4>
+      <p id="userBalance">الرصيد: 0G</p>
+      <button class="buy-btn" onclick="window.location.href='https://www.goldenspaceai.space/buy-golden.html'">شراء G 🔆</button>
+    </div>
+  </div>
+</section>
 
-  <script>
-    async function loadProfile(){
-      const res=await fetch('/api/me');
-      const data=await res.json();
-      if(data.loggedIn){
-        document.getElementById('username').textContent=data.name||'مستخدم';
-        document.getElementById('balance').textContent=data.balance||0;
-      }else{
-        document.querySelector('.profile').innerHTML=
-          '<a href="/auth/google" style="color:#00e1ff;font-weight:bold;">تسجيل الدخول باستخدام Google</a>';
-      }
+<script>
+async function loadUser(){
+  try{
+    const res=await fetch('/api/me');
+    const data=await res.json();
+    if(data.loggedIn){
+      document.querySelector('.login-btn').style.display='none';
+      const box=document.getElementById('profileBox');
+      box.style.display='flex';
+      document.getElementById('userName').textContent=data.name||'مستخدم';
+      document.getElementById('userBalance').textContent=`الرصيد: ${data.balance||0}G`;
     }
-    async function logout(){await fetch('/logout',{method:'POST'});location.reload();}
-    loadProfile();
-  </script>
+  }catch(e){console.log('User check failed',e);}
+}
+loadUser();
+</script>
+
 </body>
 </html>
