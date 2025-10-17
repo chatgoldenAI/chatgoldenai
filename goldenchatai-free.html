@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GoldenChatAI • الدردشة المجانية</title>
+<link rel="icon" href="https://goldenspaceai.space/logo.png" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Cairo',sans-serif;}
+  body{
+    background:radial-gradient(circle at 50% 20%,#0a1222 0%,#01040a 100%);
+    min-height:100vh; color:#fff; overflow-x:hidden; position:relative;
+  }
+  body::before{
+    content:""; position:absolute; inset:-30% -30% -30% -30%;
+    background:repeating-linear-gradient(120deg,rgba(0,255,255,0.05) 0 2px,transparent 2px 6px);
+    animation:move 15s linear infinite; z-index:0;
+  }
+  @keyframes move{to{background-position:400px 800px;}}
+  header{
+    position:sticky; top:0; z-index:5; background:rgba(0,0,0,0.35);
+    display:flex; justify-content:space-between; align-items:center; gap:16px;
+    padding:12px 20px; backdrop-filter:blur(10px); border-bottom:1px solid rgba(0,255,255,0.12);
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#00bfff,#00ffff);}
+  .brand h1{
+    font-size:20px; background:linear-gradient(90deg,#00c3ff,#3db2ff,#00e1ff);
+    -webkit-background-clip:text; color:transparent; text-shadow:0 0 10px rgba(0,255,255,0.35);
+  }
+  .profile{font-size:14px; color:#cfe8ff;}
+  .profile strong{color:#3ddcff;}
+  .btn, .btn-link{
+    border:none; cursor:pointer; padding:8px 14px; border-radius:10px; font-weight:700;
+    background:linear-gradient(90deg,#0066ff,#00d9ff); color:#fff; box-shadow:0 0 10px rgba(0,200,255,0.35);
+    transition:.25s;
+  }
+  .btn:hover{transform:translateY(-1px); opacity:.95;}
+  .btn-link{background:transparent; border:1px solid rgba(0,255,255,.25);}
+  .btns{display:flex; gap:8px; align-items:center;}
+  .wrap{max-width:1100px; margin:24px auto; padding:0 16px; position:relative; z-index:1;}
+  .panel{
+    display:grid; grid-template-columns:320px 1fr; gap:16px;
+  }
+  @media (max-width: 980px){ .panel{grid-template-columns:1fr;} }
+
+  /* Sidebar */
+  .card{
+    background:linear-gradient(160deg,rgba(0,40,80,.6),rgba(0,0,0,.55));
+    border:1px solid rgba(0,255,255,.18); border-radius:18px; padding:16px;
+    box-shadow:0 0 30px rgba(0,180,255,.08); backdrop-filter:blur(6px);
+  }
+  .card h3{
+    font-size:16px; margin-bottom:10px;
+    background:linear-gradient(90deg,#00d9ff,#00ffcc);
+    -webkit-background-clip:text; color:transparent;
+  }
+  label{font-size:13px; color:#bfe6ff;}
+  select,input,textarea{
+    width:100%; margin-top:6px; padding:10px 12px; border-radius:12px; border:1px solid rgba(0,255,255,.18);
+    background:rgba(1,10,20,.6); color:#e9f7ff; outline:none;
+  }
+  .row{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px;}
+  .hint{font-size:12px; color:#93dfff; opacity:.8}
+
+  /* Chat area */
+  .chat{
+    display:grid; grid-template-rows: 1fr auto; min-height:70vh;
+    background:linear-gradient(160deg,rgba(0,40,80,.45),rgba(0,0,0,.5));
+    border:1px solid rgba(0,255,255,.18); border-radius:18px; overflow:hidden;
+    box-shadow:0 0 40px rgba(0,180,255,.08);
+  }
+  .messages{ padding:16px; display:grid; gap:12px; overflow:auto;}
+  .bubble{
+    max-width:82%; padding:10px 14px; border-radius:16px; line-height:1.7; font-size:15px;
+    border:1px solid rgba(0,255,255,.2); background:rgba(0,25,45,.6);
+  }
+  .me{justify-self:end; background:rgba(0,160,255,.08); border-color:rgba(0,200,255,.35);}
+  .ai{justify-self:start; background:rgba(0,255,200,.06); border-color:rgba(0,255,200,.28);}
+  .composer{ padding:12px; border-top:1px solid rgba(0,255,255,.12); background:rgba(0,0,0,.35); display:grid; gap:8px;}
+  .row2{display:grid; grid-template-columns: 1fr auto; gap:8px;}
+  .input{ padding:12px 14px; border-radius:12px; border:1px solid rgba(0,255,255,.2); background:rgba(1,10,20,.7); color:#fff; }
+  .send{ padding:12px 16px; border-radius:12px; border:none; background:linear-gradient(90deg,#00bfff,#00ffff); color:#000; font-weight:800; cursor:pointer; }
+  .tools{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+  .lefttools{display:flex; gap:8px; align-items:center;}
+  .mini{font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid rgba(0,255,255,.2); color:#aee9ff; background:rgba(0,0,0,.25);}
+  .danger{border-color:rgba(255,60,60,.35); color:#ffaaaa;}
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo"></div>
+      <h1>GoldenChatAI — الدردشة المجانية</h1>
+    </div>
+    <div class="profile">
+      <div>مرحباً، <strong id="username">زائر</strong></div>
+      <div>رصيدك: <strong id="balance">0</strong> G</div>
+    </div>
+    <div class="btns">
+      <button class="btn-link" onclick="location.href='index.html'">🏠 الرئيسية</button>
+      <button class="btn" onclick="location.href='/buy-golden.html'">💳 شراء Golden</button>
+      <button class="btn-link" onclick="logout()">🚪 خروج</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="panel">
+      <!-- Sidebar Options -->
+      <aside class="card">
+        <h3>إعدادات بسيطة</h3>
+
+        <div class="row">
+          <label>النموذج (مجاني)</label>
+          <select id="model">
+            <option value="openai:gpt-4o-mini" selected>GPT-4o-mini (موصى به)</option>
+            <!-- يمكنك إضافة خيارات لاحقاً عند دعم مزودين آخرين -->
+          </select>
+        </div>
+
+        <div class="row">
+          <label>درجة الإبداع</label>
+          <input id="temp" type="number" min="0" max="2" step="0.1" value="0.7"/>
+        </div>
+
+        <div class="row">
+          <label>حد الرد (Tokens)</label>
+          <input id="maxTok" type="number" min="50" max="2000" step="50" value="800"/>
+        </div>
+
+        <div class="row" style="align-items:flex-start; flex-direction:column;">
+          <label>سياق النظام (اختياري)</label>
+          <textarea id="sys" rows="5" placeholder="مثال: تصرّف كمدرّس رياضيات عربي يشرح خطوة بخطوة."></textarea>
+        </div>
+
+        <div class="row">
+          <label>ذاكرة بين الرسائل</label>
+          <input id="memory" type="checkbox" checked />
+        </div>
+
+        <p class="hint">هذه الدردشة مجانية للمستخدمين — دون خصم من رصيدك.</p>
+      </aside>
+
+      <!-- Chat Area -->
+      <section class="chat card">
+        <div class="messages" id="messages"></div>
+
+        <div class="composer">
+          <div class="row2">
+            <input id="inp" class="input" type="text" placeholder="اكتب رسالتك هنا… (اضغط Enter للإرسال)"/>
+            <button id="send" class="send">إرسال</button>
+          </div>
+          <div class="tools">
+            <div class="lefttools">
+              <button class="mini" id="clear">🧹 مسح المحادثة</button>
+              <span class="mini">نصائح: اسأل بالعربية بوضوح لتحصل على أفضل نتيجة.</span>
+            </div>
+            <span class="mini">الخطة: مجانية</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // --- Profile hydrate
+    async function loadProfile(){
+      try{
+        const r = await fetch('/api/me');
+        const j = await r.json();
+        if(j.loggedIn){
+          document.getElementById('username').textContent = j.name || 'مستخدم';
+          document.getElementById('balance').textContent = j.balance || 0;
+        }else{
+          document.querySelector('.profile').innerHTML =
+            '<a href="/auth/google" style="color:#00e1ff;font-weight:bold;">تسجيل الدخول باستخدام Google</a>';
+        }
+      }catch(e){}
+    }
+    loadProfile();
+
+    // --- Local storage memory (client-side)
+    const STORE_KEY = 'gchat_free_state_v1';
+    let state = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+    if(!state.messages) state.messages = [];
+
+    const elMsgs = document.getElementById('messages');
+    const elInp = document.getElementById('inp');
+    const elSend = document.getElementById('send');
+    const elClear = document.getElementById('clear');
+    const elModel = document.getElementById('model');
+    const elTemp = document.getElementById('temp');
+    const elMaxTok = document.getElementById('maxTok');
+    const elSys = document.getElementById('sys');
+    const elMem = document.getElementById('memory');
+
+    function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+
+    function render(){
+      elMsgs.innerHTML = '';
+      state.messages.forEach(m=>{
+        const b = document.createElement('div');
+        b.className = 'bubble ' + (m.role==='user' ? 'me':'ai');
+        b.textContent = m.content;
+        elMsgs.appendChild(b);
+      });
+      elMsgs.scrollTop = elMsgs.scrollHeight;
+    }
+    render();
+
+    async function send(){
+      const text = elInp.value.trim();
+      if(!text) return;
+      state.messages.push({ role:'user', content:text });
+      elInp.value = '';
+      render(); save();
+
+      const body = {
+        messages: (elMem.checked ? state.messages : [{role:'user', content:text}]).slice(-40),
+        model: elModel.value,
+        plan: 'free',
+        temperature: Number(elTemp.value || 0.7),
+        max_output_tokens: Number(elMaxTok.value || 800),
+        system: elSys.value || ''
+      };
+
+      try{
+        const r = await fetch('/api/goldenchatai/chat',{
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(body)
+        });
+        const data = await r.json();
+        const reply = data.reply || data.error || 'حدث خطأ غير متوقع.';
+        state.messages.push({ role:'assistant', content: reply });
+      }catch(e){
+        state.messages.push({ role:'assistant', content: 'تعذّر الإرسال. تحقق من الاتصال.' });
+      }
+      render(); save();
+    }
+
+    elSend.addEventListener('click', send);
+    elInp.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !e.shiftKey) send(); });
+    elClear.addEventListener('click', ()=>{
+      state.messages = [];
+      render(); save();
+    });
+
+    async function logout(){ await fetch('/logout',{method:'POST'}); location.href='index.html'; }
+    window.logout = logout;
+  </script>
+</body>
+</html>
