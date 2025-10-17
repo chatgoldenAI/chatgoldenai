@@ -1,59 +1,70 @@
-// index.js — GoldenChatAI (Arabic AI System by GoldenSpaceAI)
+// GoldenChatAI Unified Backend — Free + Advanced AI + Golden Sync
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import cookieParser from "cookie-parser";
+import { Strategy as GitHubStrategy } from "passport-github2";
 import fs from "fs";
 import OpenAI from "openai";
-import axios from "axios";
-import multer from "multer";
 
 dotenv.config();
 const app = express();
 app.set("trust proxy", 1);
 
-// Middleware
+// ─────────────────────────────────────────────
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "golden-secret",
     resave: false,
     saveUninitialized: true,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
       httpOnly: true,
-      sameSite: "lax"
-    }
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
   })
 );
 
-// ===== Database =====
-const GOLDEN_DB_FILE = "./golden_database.json";
-function loadDB() {
-  if (!fs.existsSync(GOLDEN_DB_FILE))
-    fs.writeFileSync(GOLDEN_DB_FILE, JSON.stringify({ users: {} }, null, 2));
-  const raw = fs.readFileSync(GOLDEN_DB_FILE, "utf8");
-  return raw.trim() ? JSON.parse(raw) : { users: {} };
-}
-function saveDB(db) {
-  fs.writeFileSync(GOLDEN_DB_FILE, JSON.stringify(db, null, 2));
-}
-function getUserID(req) {
-  return req.user ? `${req.user.id}@${req.user.provider}` : null;
-}
-
-// ===== Passport (Google) =====
-passport.serializeUser((u, d) => d(null, u));
-passport.deserializeUser((o, d) => d(null, o));
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((obj, done) => done(null, obj));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// ─────────────────────────────────────────────
+// Static files (no folders needed)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(__dirname));
+
+// ─────────────────────────────────────────────
+// Helper: Load GoldenSpaceAI DB if available
+function loadGoldenDB() {
+  const pathDB = "/data/golden_database.json";
+  try {
+    if (fs.existsSync(pathDB)) {
+      const raw = fs.readFileSync(pathDB, "utf8");
+      return raw.trim() ? JSON.parse(raw) : { users: {} };
+    }
+  } catch (e) {
+    console.error("Golden DB read error:", e);
+  }
+  return { users: {} };
+}
+function getUserId(req) {
+  return req.user ? `${req.user.id}@${req.user.provider}` : null;
+}
+
+// ─────────────────────────────────────────────
+// Passport Google
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   passport.use(
     new GoogleStrategy(
@@ -61,138 +72,125 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: "/auth/google/callback",
+        proxy: true,
       },
       (_a, _b, profile, done) => {
-        const db = loadDB();
-        const id = `${profile.id}@google`;
-        if (!db.users[id]) {
-          db.users[id] = {
-            id,
-            name: profile.displayName,
-            email: profile.emails?.[0]?.value || "",
-            golden_balance: 0,
-            subscriptions: {},
-            created_at: new Date().toISOString()
-          };
-          saveDB(db);
-        }
-        done(null, {
+        const user = {
           id: profile.id,
           name: profile.displayName,
           email: profile.emails?.[0]?.value || "",
+          photo: profile.photos?.[0]?.value || "",
           provider: "google",
-        });
+        };
+        done(null, user);
       }
     )
   );
-
   app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
   app.get(
     "/auth/google/callback",
-    passport.authenticate("google", { failureRedirect: "/" }),
+    passport.authenticate("google", { failureRedirect: "/login-signup.html" }),
     (_req, res) => res.redirect("/index.html")
   );
 }
 
-// ====== AI Setup ======
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
-const upload = multer({ storage: multer.memoryStorage() });
-
-function getProfile(req) {
-  const db = loadDB();
-  const id = getUserID(req);
-  if (!id || !db.users[id]) return { golden_balance: 0, premium: false };
-  const u = db.users[id];
-  const subs = u.subscriptions || {};
-  const premium = !!(subs["goldenchatai_premium"] || subs["chat_advancedai"]);
-  return { golden_balance: u.golden_balance || 0, premium };
+// Passport GitHub
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  passport.use(
+    new GitHubStrategy(
+      {
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: "/auth/github/callback",
+        proxy: true,
+      },
+      (_a, _b, profile, done) => {
+        const user = {
+          id: profile.id,
+          name: profile.displayName || profile.username,
+          email: profile.emails?.[0]?.value || `${profile.username}@github.user`,
+          photo: profile.photos?.[0]?.value || "",
+          provider: "github",
+        };
+        done(null, user);
+      }
+    )
+  );
+  app.get("/auth/github", passport.authenticate("github", { scope: ["user:email"] }));
+  app.get(
+    "/auth/github/callback",
+    passport.authenticate("github", { failureRedirect: "/login-signup.html" }),
+    (_req, res) => res.redirect("/index.html")
+  );
 }
 
-function requireLogin(req, res, next) {
-  if (req.user) return next();
-  return res.status(401).json({ error: "Login required" });
-}
-
-function requirePremium(plan, isPremium) {
-  if (plan === "premium" && !isPremium) throw new Error("PREMIUM_REQUIRED");
-}
-
-// ====== API Routes ======
-app.get("/api/me", (req, res) => {
-  if (!req.user) return res.json({ loggedIn: false, balance: 0 });
-  const db = loadDB();
-  const id = getUserID(req);
-  const u = db.users[id];
-  res.json({
-    loggedIn: true,
-    name: u?.name || "مستخدم",
-    balance: u?.golden_balance || 0,
-    subscriptions: u?.subscriptions || {}
+// Logout
+app.post("/logout", (req, res) => {
+  req.logout(() => {
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      res.json({ ok: true });
+    });
   });
 });
 
-// Unlock feature (for 40G advanced AI)
-app.post("/api/unlock-feature", requireLogin, (req, res) => {
-  const { feature, cost } = req.body;
-  const db = loadDB();
-  const id = getUserID(req);
-  const user = db.users[id];
-  if (!user) return res.status(404).json({ error: "User not found" });
-  if ((user.golden_balance || 0) < cost) return res.status(400).json({ error: "رصيد غير كافٍ" });
-
-  user.golden_balance -= cost;
-  user.subscriptions = user.subscriptions || {};
-  const exp = new Date();
-  exp.setDate(exp.getDate() + 30);
-  user.subscriptions[feature] = exp.toISOString();
-  saveDB(db);
-  res.json({ success: true, newBalance: user.golden_balance });
+// ─────────────────────────────────────────────
+// API: /api/me → Returns name & Golden balance
+app.get("/api/me", (req, res) => {
+  if (!req.user) return res.json({ loggedIn: false, balance: 0 });
+  const db = loadGoldenDB();
+  const id = getUserId(req);
+  const userDB = db.users[id];
+  const bal = userDB?.golden_balance || 0;
+  res.json({ loggedIn: true, name: req.user.name, balance: bal });
 });
 
-// Chat endpoint
-app.post("/api/goldenchatai/chat", requireLogin, express.json(), async (req, res) => {
-  try {
-    const { messages = [], model = "openai:gpt-4o-mini", plan = "free" } = req.body;
-    const { premium } = getProfile(req);
-    requirePremium(plan, premium);
+// ─────────────────────────────────────────────
+// Chat endpoints
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Free AI chat
+app.post("/chat-advanced-ai", async (req, res) => {
+  const { q, model } = req.body;
+  try {
     const completion = await openai.chat.completions.create({
-      model,
-      messages,
-      temperature: 0.7,
+      model: model || "gpt-4o-mini",
+      messages: [{ role: "user", content: q || "Hello" }],
       max_tokens: 800,
     });
-    const reply = completion.choices?.[0]?.message?.content || "لا يوجد رد.";
+    const reply = completion.choices[0]?.message?.content || "لا توجد إجابة.";
     res.json({ reply });
   } catch (e) {
-    if (e.message === "PREMIUM_REQUIRED")
-      return res.status(402).json({ error: "الخطة المميزة مطلوبة." });
+    console.error("AI error:", e.message);
     res.status(500).json({ error: e.message });
   }
 });
 
-// Image endpoint
-app.post("/api/goldenchatai/image", requireLogin, upload.single("image"), async (req, res) => {
+// Placeholder for paid advanced AI (40 G)
+app.post("/chat-advanced-pro", async (req, res) => {
+  const { q, model } = req.body;
   try {
-    const { prompt = "", plan = "free" } = req.body;
-    const { premium } = getProfile(req);
-    requirePremium(plan, premium);
-    const result = await openai.images.generate({
-      model: "gpt-image-1",
-      prompt: prompt || "golden arabic ai wallpaper",
-      size: "512x512",
+    const completion = await openai.chat.completions.create({
+      model: model || "gpt-5", // upgrade later
+      messages: [{ role: "user", content: q || "مرحبا" }],
+      max_tokens: 1200,
     });
-    const b64 = result.data?.[0]?.b64_json;
-    res.json({ url: `data:image/png;base64,${b64}` });
+    const reply = completion.choices[0]?.message?.content || "لا توجد إجابة.";
+    res.json({ reply });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-// Serve HTMLs
-app.get("/", (_req, res) => res.sendFile(process.cwd() + "/index.html"));
-app.get("/:page.html", (req, res) => res.sendFile(process.cwd() + "/" + req.params.page + ".html"));
+// ─────────────────────────────────────────────
+// Default routes
+app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "index.html")));
+app.get("/:page.html", (req, res) => res.sendFile(path.join(__dirname, req.params.page + ".html")));
 
-// ====== Start ======
+app.get("/health", (_req, res) => res.json({ status: "OK", time: new Date().toISOString() }));
+
+// ─────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 GoldenChatAI running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 GoldenChatAI running on port ${PORT}`);
+});
