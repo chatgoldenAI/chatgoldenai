@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoldenChatAI · الصفحة الرئيسية</title>
+  <link rel="icon" href="https://goldenspaceai.space/logo.png">
+  <style>
+    :root {
+      --gold1: #f6c64a;
+      --gold2: #eb8b36;
+      --dark: #0b0e16;
+      --card: rgba(255,255,255,0.08);
+      --radius: 18px;
+    }
+    * {box-sizing:border-box;margin:0;padding:0;font-family:'Cairo',sans-serif;}
+    body {
+      background: radial-gradient(circle at 50% 30%, #101521 0%, #070b12 100%);
+      color:#fff;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    header {
+      width:100%;
+      background:rgba(0,0,0,0.4);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 30px;
+      position:sticky;
+      top:0;
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(255,255,255,0.1);
+    }
+    header h1 {font-size:22px;background:linear-gradient(90deg,var(--gold1),var(--gold2));-webkit-background-clip:text;color:transparent;}
+    .profile {text-align:left;font-size:15px;}
+    .profile span {color:var(--gold1);font-weight:bold;}
+    .buttons button {
+      background:linear-gradient(90deg,var(--gold1),var(--gold2));
+      border:none;
+      color:#000;
+      padding:6px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:bold;
+      margin-left:8px;
+    }
+    main {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      margin-top:40px;
+      gap:40px;
+    }
+    .boxes {
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:30px;
+    }
+    .box {
+      width:280px;
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:25px;
+      box-shadow:0 0 20px rgba(0,0,0,0.5);
+      transition:transform 0.3s;
+    }
+    .box:hover {transform:translateY(-6px);}
+    .box h2 {
+      font-size:20px;
+      margin-bottom:10px;
+      background:linear-gradient(90deg,var(--gold1),var(--gold2));
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+    .box p {font-size:15px;opacity:0.85;margin-bottom:15px;}
+    .box button {
+      background:linear-gradient(90deg,var(--gold1),var(--gold2));
+      border:none;
+      padding:8px 16px;
+      font-weight:bold;
+      border-radius:10px;
+      cursor:pointer;
+      color:#000;
+    }
+    footer {padding:20px;font-size:13px;opacity:0.7;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GoldenChatAI</h1>
+    <div class="profile">
+      <div>مرحباً، <span id="username">زائر</span></div>
+      <div>رصيدك: <span id="balance">0</span> G</div>
+    </div>
+    <div class="buttons">
+      <button onclick="window.location='/buy-golden.html'">💰 شراء Golden</button>
+      <button onclick="logout()">🚪 تسجيل الخروج</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="boxes">
+      <div class="box">
+        <h2>تحدث وتعلم مع الذكاء الاصطناعي</h2>
+        <p>تجربة مجانية للدردشة مع الذكاء الاصطناعي بلغتك العربية.</p>
+        <button onclick="window.location='goldenchatai-free.html'">ابدأ الآن</button>
+      </div>
+      <div class="box">
+        <h2>الذكاء الاصطناعي المتقدم</h2>
+        <p>نموذج مطور من GPT-5 و Gemini 2.5 Pro — توليد صور وذاكرة محادثة.</p>
+        <button onclick="window.location='goldenchatai-advanced.html'">40 G — ابدأ الآن</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>© 2025 GoldenSpaceAI • جميع الحقوق محفوظة</footer>
+
+  <script>
+    async function loadProfile() {
+      const res = await fetch('/api/me');
+      const data = await res.json();
+      if (data.loggedIn) {
+        document.getElementById('username').textContent = data.name || 'مستخدم';
+        document.getElementById('balance').textContent = data.balance || 0;
+      } else {
+        document.querySelector('.profile').innerHTML = '<a href="/auth/google" style="color:var(--gold1);font-weight:bold;">تسجيل الدخول باستخدام Google</a>';
+      }
+    }
+    async function logout() {
+      await fetch('/logout', {method:'POST'});
+      location.reload();
+    }
+    loadProfile();
+  </script>
+</body>
+</html>
