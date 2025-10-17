@@ -1,17 +1,23 @@
 {
-  "name": "goldenchat",
+  "name": "goldenchatai",
   "version": "1.0.0",
-  "description": "GoldenChat - GPT-5 Chat Platform",
+  "description": "Arabic AI chat system powered by GoldenSpaceAI — includes free and advanced GPT/Gemini chat",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node index.js"
+    "start": "node index.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "axios": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.19.2",
+    "express-session": "^1.17.3",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.11",
+    "openai": "^4.52.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
   }
 }
