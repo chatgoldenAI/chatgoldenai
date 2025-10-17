@@ -1,35 +1,17 @@
 {
-  "name": "goldenchat-server",
+  "name": "goldenchat",
   "version": "1.0.0",
-  "description": "GoldenChat - GPT-5 Chat Platform by GoldenSpaceAI",
+  "description": "GoldenChat - GPT-5 Chat Platform",
   "main": "index.js",
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "jest",
-    "lint": "eslint .",
-    "build": "npm install"
+    "dev": "node index.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "socket.io": "^4.7.2",
-    "mongoose": "^7.4.0",
-    "cors": "^2.8.5",
-    "helmet": "^7.0.0",
-    "compression": "^1.7.4",
-    "express-rate-limit": "^6.8.1",
-    "dotenv": "^16.3.1",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.1",
-    "axios": "^1.4.0",
-    "winston": "^3.10.0"
+    "cors": "^2.8.5"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.1",
-    "jest": "^29.6.1",
-    "eslint": "^8.45.0"
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
