@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>تسجيل الدخول • GoldenChatAI</title>
+<link rel="icon" href="https://goldenspaceai.space/logo.png" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif;}
+  body{
+    background:radial-gradient(circle at 50% 20%,#02122a 0%,#000308 100%);
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+  }
+
+  .container{
+    background:rgba(0,0,0,0.5);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(0,255,255,0.2);
+    padding:40px 30px;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(0,255,255,0.2);
+    text-align:center;
+    width:90%;
+    max-width:400px;
+  }
+
+  h1{
+    background:linear-gradient(90deg,#00c3ff,#3db2ff,#00e1ff);
+    -webkit-background-clip:text;
+    color:transparent;
+    font-size:24px;
+    margin-bottom:15px;
+  }
+
+  p{
+    color:#cfcfcf;
+    font-size:15px;
+    margin-bottom:25px;
+  }
+
+  .btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    text-decoration:none;
+    color:#fff;
+    background:linear-gradient(90deg,#0078ff,#00ffff);
+    padding:12px 15px;
+    border-radius:10px;
+    margin-bottom:15px;
+    transition:0.3s;
+  }
+
+  .btn img{
+    width:22px;
+    height:22px;
+    border-radius:50%;
+  }
+
+  .btn:hover{
+    transform:scale(1.03);
+    box-shadow:0 0 10px rgba(0,255,255,0.4);
+  }
+
+  .divider{
+    margin:15px 0;
+    color:#888;
+    font-size:13px;
+    position:relative;
+  }
+
+  .divider::before,
+  .divider::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:40%;
+    height:1px;
+    background:rgba(255,255,255,0.2);
+  }
+  .divider::before{right:60%;}
+  .divider::after{left:60%;}
+
+  footer{
+    margin-top:20px;
+    font-size:13px;
+    color:#aaa;
+  }
+
+  footer a{
+    color:#00e1ff;
+    text-decoration:none;
+    transition:0.3s;
+  }
+  footer a:hover{color:#00ffff;text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>مرحبًا بك في GoldenChatAI</h1>
+  <p>سجّل الدخول للوصول إلى جميع ميزات الذكاء الاصطناعي، ومزامنة رصيدك الذهبي (G).</p>
+
+  <a href="/auth/google" class="btn">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+    <span>تسجيل الدخول عبر Google</span>
+  </a>
+
+  <a href="/auth/github" class="btn" style="background:linear-gradient(90deg,#24292f,#586069);">
+    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
+    <span>تسجيل الدخول عبر GitHub</span>
+  </a>
+
+  <div class="divider">أو</div>
+
+  <a href="/goldenchatai-free.html" class="btn" style="background:rgba(0,0,0,0.4);border:1px solid rgba(0,255,255,0.4);">
+    <span>استخدام الدردشة المجانية بدون تسجيل</span>
+  </a>
+
+  <footer>
+    <p>باستخدامك للموقع، أنت توافق على  
+      <a href="https://www.goldenspaceai.space/terms.html" target="_blank">شروط الخدمة</a> • 
+      <a href="https://www.goldenspaceai.space/refund.html" target="_blank">سياسة الاسترجاع</a> • 
+      <a href="https://www.goldenspaceai.space/privacy.html" target="_blank">سياسة الخصوصية</a>
+    </p>
+    <p>تم التشغيل بواسطة <strong>GoldenSpaceAI</strong></p>
+  </footer>
+</div>
+
+</body>
+</html>
