@@ -51,6 +51,35 @@
       font-size: 1.8em;
     }
 
+    .user-profile {
+      position: absolute;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.2);
+      padding: 5px 15px;
+      border-radius: 20px;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+
+    .user-info {
+      font-size: 0.8em;
+    }
+
+    .user-plan {
+      background: var(--gold-dark);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.7em;
+    }
+
     .chat-area {
       flex: 1;
       display: flex;
@@ -267,6 +296,12 @@
       transform: translateY(0);
     }
 
+    .send-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .footer {
       background-color: #f0f0f0;
       text-align: center;
@@ -299,6 +334,41 @@
       font-size: 0.85em;
     }
 
+    .image-preview {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .code-block {
+      background: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+      overflow-x: auto;
+    }
+
+    .login-prompt {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+
+    .login-btn {
+      background: linear-gradient(to left, var(--gold-dark), var(--gold));
+      color: white;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 15px;
+    }
+
     /* Responsive design */
     @media (max-width: 768px) {
       .chat-area {
@@ -320,6 +390,17 @@
       select, button {
         flex: 1;
       }
+
+      .user-profile {
+        position: static;
+        justify-content: center;
+        margin-top: 10px;
+      }
+
+      header {
+        flex-direction: column;
+        padding: 10px;
+      }
     }
   </style>
 </head>
@@ -328,6 +409,13 @@
   <header>
     <i class="fas fa-crown logo"></i>
     <span>GoldenArabicAI - مساعد الذكاء الاصطناعي الذهبي</span>
+    <div class="user-profile" id="userProfile" style="display: none;">
+      <img src="" alt="Profile" class="user-avatar" id="userAvatar">
+      <div class="user-info">
+        <div id="userName"></div>
+        <div class="user-plan" id="userPlan">مجاني</div>
+      </div>
+    </div>
   </header>
 
   <div class="chat-area">
@@ -360,7 +448,7 @@
         </div>
       </div>
 
-      <div class="input-section">
+      <div class="input-section" id="inputSection">
         <div class="input-container">
           <textarea id="chatInput" placeholder="اكتب رسالتك هنا..."></textarea>
           <div class="input-actions">
@@ -370,7 +458,7 @@
               <option value="code">كتابة كود</option>
               <option value="translate">ترجمة</option>
             </select>
-            <button class="send-btn" onclick="handleAction()">
+            <button class="send-btn" onclick="handleAction()" id="sendBtn">
               <i class="fas fa-paper-plane"></i>
               إرسال
             </button>
@@ -394,13 +482,60 @@
   </div>
 
   <script>
+    // DOM Elements
     const chatThread = document.getElementById("chatThread");
     const chatInput = document.getElementById("chatInput");
     const actionType = document.getElementById("actionType");
     const typingIndicator = document.getElementById("typingIndicator");
+    const sendBtn = document.getElementById("sendBtn");
+    const userProfile = document.getElementById("userProfile");
+    const userName = document.getElementById("userName");
+    const userAvatar = document.getElementById("userAvatar");
+    const inputSection = document.getElementById("inputSection");
+
+    // Check user authentication on load
+    checkAuthentication();
+
+    // دالة للتحقق من المصادقة
+    async function checkAuthentication() {
+      try {
+        const response = await fetch('/api/me');
+        const userData = await response.json();
+        
+        if (userData.loggedIn) {
+          // User is logged in
+          userProfile.style.display = 'flex';
+          userName.textContent = userData.name;
+          userAvatar.src = userData.photo || '/default-avatar.png';
+          userPlan.textContent = userData.plan === 'free' ? 'مجاني' : userData.plan;
+        } else {
+          // User is not logged in - show login prompt
+          showLoginPrompt();
+        }
+      } catch (error) {
+        console.error('Authentication check failed:', error);
+        showLoginPrompt();
+      }
+    }
+
+    // دالة لعرض رسالة تسجيل الدخول
+    function showLoginPrompt() {
+      chatThread.innerHTML = `
+        <div class="login-prompt">
+          <i class="fas fa-robot" style="font-size: 3em; color: #d4af37; margin-bottom: 20px;"></i>
+          <h3>يرجى تسجيل الدخول للاستفادة من الذكاء الاصطناعي</h3>
+          <p>سجل الدخول للبدء في المحادثة مع مساعدنا الذكي</p>
+          <a href="login-signup.html" class="login-btn">
+            <i class="fas fa-sign-in-alt"></i>
+            تسجيل الدخول
+          </a>
+        </div>
+      `;
+      inputSection.style.display = 'none';
+    }
 
     // دالة لإضافة رسالة جديدة إلى المحادثة
-    function appendMessage(sender, text, type = "chat") {
+    function appendMessage(sender, text, type = "chat", imageUrl = null, code = null) {
       const msg = document.createElement("div");
       msg.className = `chat-message ${sender}`;
       
@@ -416,12 +551,11 @@
       }
       
       let content = text;
-      if (type === "image") {
-        content = `🖼️ طلبت إنشاء صورة: "${text}"`;
-      } else if (type === "code") {
-        content = `</> طلبت كتابة كود: "${text}"`;
-      } else if (type === "translate") {
-        content = `🌐 طلبت ترجمة: "${text}"`;
+      
+      if (type === "image" && imageUrl) {
+        content = `${text}<br><img src="${imageUrl}" alt="الصورة المولدة" class="image-preview">`;
+      } else if (type === "code" && code) {
+        content = `${text}<pre class="code-block">${escapeHtml(code)}</pre>`;
       }
       
       msg.innerHTML = `
@@ -429,7 +563,7 @@
           <i class="${icon} message-icon"></i>
           ${senderName}
         </div>
-        ${content}
+        <div class="message-content">${content}</div>
         <div class="message-time">${timeString}</div>
       `;
       
@@ -437,40 +571,18 @@
       chatThread.scrollTop = chatThread.scrollHeight;
     }
 
-    // دالة لمحاكاة استجابة الذكاء الاصطناعي
-    function simulateAIResponse(userMessage, action) {
-      // إظهار مؤشر الكتابة
-      typingIndicator.style.display = 'block';
-      chatThread.scrollTop = chatThread.scrollHeight;
-      
-      setTimeout(() => {
-        // إخفاء مؤشر الكتابة
-        typingIndicator.style.display = 'none';
-        
-        let response = "";
-        
-        if (action === "chat") {
-          const responses = [
-            `شكراً لرسالتك! "${userMessage}" - كيف يمكنني مساعدتك بشكل أفضل؟`,
-            `رائع! "${userMessage}" - هل تريد المزيد من المعلومات حول هذا الموضوع؟`,
-            `فهمت طلبك: "${userMessage}" - إليك ما يمكنني تقديمه...`,
-            `ممتع! "${userMessage}" - دعني أساعدك في ذلك.`
-          ];
-          response = responses[Math.floor(Math.random() * responses.length)];
-        } else if (action === "image") {
-          response = `🖼️ تم إنشاء الصورة بناءً على طلبك: "${userMessage}". يمكنك رؤية النتيجة أدناه.`;
-        } else if (action === "code") {
-          response = `</> إليك الكود الذي طلبت كتابته لـ: "${userMessage}". سأقوم بتنفيذه لك.`;
-        } else if (action === "translate") {
-          response = `🌐 تمت ترجمة النص: "${userMessage}" إلى اللغة المطلوبة. إليك النتيجة.`;
-        }
-        
-        appendMessage("ai", response, action);
-      }, 1500 + Math.random() * 2000); // وقت استجابة عشوائي بين 1.5-3.5 ثانية
+    // دالة للهروب من HTML
+    function escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
-    // دالة التعامل مع الإجراءات
-    function handleAction() {
+    // دالة التعامل مع الإجراءات - الاتصال بالخادم الحقيقي
+    async function handleAction() {
       const text = chatInput.value.trim();
       const action = actionType.value;
 
@@ -479,18 +591,74 @@
         return;
       }
 
+      // تعطيل الزر أثناء الإرسال
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+
+      // إضافة رسالة المستخدم
       appendMessage("user", text, action);
+
+      // مسح حقل الإدخال
       chatInput.value = "";
-      
-      // محاكاة استجابة الذكاء الاصطناعي
-      simulateAIResponse(text, action);
+
+      try {
+        // إظهار مؤشر الكتابة
+        typingIndicator.style.display = 'block';
+        chatThread.scrollTop = chatThread.scrollHeight;
+
+        // إرسال الطلب إلى الخادم
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: text,
+            actionType: action
+          })
+        });
+
+        const data = await response.json();
+
+        // إخفاء مؤشر الكتابة
+        typingIndicator.style.display = 'none';
+
+        if (!response.ok) {
+          throw new Error(data.arabicError || data.error || 'حدث خطأ غير متوقع');
+        }
+
+        // إضافة رد الذكاء الاصطناعي بناءً على نوع الإجراء
+        if (action === "image" && data.type === "image") {
+          appendMessage("ai", data.message || "تم إنشاء الصورة بنجاح", "image", data.content);
+        } else if (action === "code" && data.type === "code") {
+          appendMessage("ai", data.message || "تم إنشاء الكود بنجاح", "code", null, data.content);
+        } else if (action === "translate" && data.type === "translation") {
+          appendMessage("ai", data.content, "translate");
+        } else {
+          appendMessage("ai", data.content, "chat");
+        }
+
+      } catch (error) {
+        // إخفاء مؤشر الكتابة في حالة الخطأ
+        typingIndicator.style.display = 'none';
+        
+        // عرض رسالة الخطأ
+        appendMessage("ai", `عذراً، حدث خطأ: ${error.message}`, "chat");
+        console.error('API Error:', error);
+      } finally {
+        // إعادة تمكين الزر
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال';
+      }
     }
 
     // السماح بالإرسال بالضغط على Enter
     chatInput.addEventListener("keydown", function(event) {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
-        handleAction();
+        if (!sendBtn.disabled) {
+          handleAction();
+        }
       }
     });
 
@@ -498,10 +666,10 @@
     window.onload = function() {
       chatInput.focus();
     };
+
+    // تحديث حالة المستخدم كل 30 ثانية
+    setInterval(checkAuthentication, 30000);
   </script>
-  
-  <!-- الاتصال بملف index.js -->
-  <script src="index.js"></script>
 
 </body>
 </html>
