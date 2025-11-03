@@ -10,14 +10,14 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import fs from "fs";
 import OpenAI from "openai";
-import fetch from "node-fetch"; // required for API balance call
+import fetch from "node-fetch";
 
 dotenv.config();
 const app = express();
 app.set("trust proxy", 1);
 
 // ─────────────────────────────────────────────
-// Middleware setup
+// Middleware
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
@@ -31,7 +31,7 @@ app.use(
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
@@ -42,13 +42,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // ─────────────────────────────────────────────
-// Static files (no folders needed)
+// Static files
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(__dirname));
 
 // ─────────────────────────────────────────────
-// Passport: Google OAuth
+// Google OAuth
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   passport.use(
     new GoogleStrategy(
@@ -78,7 +78,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   );
 }
 
-// Passport: GitHub OAuth
+// GitHub OAuth
 if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   passport.use(
     new GitHubStrategy(
@@ -109,7 +109,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
 }
 
 // ─────────────────────────────────────────────
-// Logout endpoint
+// Logout
 app.post("/logout", (req, res) => {
   req.logout(() => {
     req.session.destroy(() => {
@@ -120,7 +120,7 @@ app.post("/logout", (req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// /api/me → Returns user info + Golden balance (via GoldenSpaceAI API)
+// /api/me → User info + balance
 app.get("/api/me", async (req, res) => {
   if (!req.user) return res.json({ loggedIn: false, balance: 0 });
   try {
@@ -141,7 +141,7 @@ app.get("/api/me", async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// AI setup
+// OpenAI setup
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Free AI Chat
@@ -161,12 +161,12 @@ app.post("/chat-free-ai", async (req, res) => {
   }
 });
 
-// Advanced AI (for paid users / 40G)
+// Advanced AI Chat
 app.post("/chat-advanced-ai", async (req, res) => {
   const { q, model } = req.body;
   try {
     const completion = await openai.chat.completions.create({
-      model: model || "gpt-5", // will support Gemini 2.5 later
+      model: model || "gpt-5",
       messages: [{ role: "user", content: q || "مرحباً أيها الذكاء المتقدم" }],
       max_tokens: 1200,
     });
@@ -179,7 +179,7 @@ app.post("/chat-advanced-ai", async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// Routes for pages
+// Serve all HTML pages (index, nplans, terms, etc.)
 app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "index.html")));
 app.get("/:page.html", (req, res) => {
   const filePath = path.join(__dirname, `${req.params.page}.html`);
