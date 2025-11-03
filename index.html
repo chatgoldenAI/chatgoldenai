@@ -3,184 +3,505 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GoldenChatAI</title>
+  <title>GoldenArabicAI - مساعد الذكاء الاصطناعي الذهبي</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
       --gold: #d4af37;
+      --gold-light: #f4e4a0;
+      --gold-dark: #b8860b;
       --dark: #1e1e1e;
       --light: #f9f9f9;
       --accent: #fff8dc;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
+      font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
       background-color: var(--light);
       color: var(--dark);
       display: flex;
       flex-direction: column;
       height: 100vh;
+      line-height: 1.6;
     }
 
     header {
-      background: linear-gradient(to left, #b8860b, #ffd700);
+      background: linear-gradient(to left, var(--gold-dark), var(--gold));
       color: white;
-      padding: 15px;
+      padding: 15px 20px;
       text-align: center;
       font-size: 1.5em;
       font-weight: bold;
+      box-shadow: var(--shadow);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .logo {
+      font-size: 1.8em;
     }
 
     .chat-area {
       flex: 1;
       display: flex;
       flex-direction: column;
-      max-width: 900px;
-      margin: auto;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
       padding: 20px;
+      overflow: hidden;
+    }
+
+    .welcome-banner {
+      background: linear-gradient(135deg, var(--gold-light), var(--accent));
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border-right: 5px solid var(--gold);
+    }
+
+    .welcome-banner h2 {
+      margin: 0 0 10px 0;
+      color: var(--dark);
+      font-size: 1.8em;
+    }
+
+    .welcome-banner p {
+      margin: 0;
+      color: #555;
+      font-size: 1.1em;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid #eee;
     }
 
     .chat-thread {
       flex: 1;
-      background-color: white;
-      border: 2px solid var(--gold);
-      border-radius: 10px;
-      padding: 15px;
+      padding: 20px;
       overflow-y: auto;
-      margin-bottom: 15px;
+      background-color: #fafafa;
     }
 
     .chat-message {
-      margin-bottom: 10px;
-      padding: 8px;
-      border-radius: 6px;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: var(--radius);
+      max-width: 85%;
+      position: relative;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .user {
-      background-color: #fff8dc;
+      background: linear-gradient(135deg, var(--gold-light), var(--accent));
+      margin-left: auto;
       text-align: right;
+      border-bottom-right-radius: 5px;
     }
 
     .ai {
-      background-color: #f0f0f0;
-      text-align: left;
+      background-color: white;
+      margin-right: auto;
+      text-align: right;
+      border-bottom-left-radius: 5px;
+      border: 1px solid #eee;
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    .user .message-header {
+      color: var(--gold-dark);
+      justify-content: flex-end;
+    }
+
+    .ai .message-header {
+      color: #555;
+    }
+
+    .message-icon {
+      margin-left: 8px;
+      font-size: 1.2em;
+    }
+
+    .message-time {
+      font-size: 0.8em;
+      color: #888;
+      margin-top: 5px;
+    }
+
+    .typing-indicator {
+      display: none;
+      padding: 15px;
+      background-color: white;
+      border-radius: var(--radius);
+      margin-right: auto;
+      max-width: 85%;
+      border: 1px solid #eee;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .typing-dots span {
+      height: 8px;
+      width: 8px;
+      border-radius: 50%;
+      background-color: #ccc;
+      animation: typing 1.5s infinite;
+    }
+
+    .typing-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
     }
 
     .input-section {
       display: flex;
       gap: 10px;
+      padding: 20px;
+      background-color: white;
+      border-top: 1px solid #eee;
+    }
+
+    .input-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
     }
 
     textarea {
       flex: 1;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      padding: 12px 15px;
+      border-radius: var(--radius);
+      border: 1px solid #ddd;
       resize: none;
       height: 60px;
+      font-family: inherit;
+      font-size: 1em;
+      transition: border 0.3s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+    }
+
+    .input-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
     }
 
     select, button {
-      padding: 10px;
-      border-radius: 5px;
+      padding: 10px 15px;
+      border-radius: var(--radius);
       border: none;
       font-weight: bold;
       cursor: pointer;
+      transition: all 0.3s;
     }
 
     select {
-      background-color: #fff8dc;
+      background-color: var(--accent);
+      border: 1px solid #ddd;
     }
 
-    button {
-      background-color: var(--gold);
+    .send-btn {
+      background: linear-gradient(to left, var(--gold-dark), var(--gold));
       color: white;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    button:hover {
-      background-color: #c9a02b;
+    .send-btn:hover {
+      background: linear-gradient(to left, #a0780a, #c9a02b);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .send-btn:active {
+      transform: translateY(0);
     }
 
     .footer {
       background-color: #f0f0f0;
       text-align: center;
-      padding: 10px;
+      padding: 15px;
       font-size: 0.9em;
       border-top: 1px solid #ccc;
+      color: #555;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 10px;
     }
 
     .footer a {
-      margin: 0 10px;
       color: #555;
       text-decoration: none;
+      transition: color 0.3s;
     }
 
     .footer a:hover {
+      color: var(--gold-dark);
       text-decoration: underline;
+    }
+
+    .copyright {
+      font-size: 0.85em;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .chat-area {
+        padding: 10px;
+      }
+      
+      .chat-message {
+        max-width: 95%;
+      }
+      
+      .input-section {
+        flex-direction: column;
+      }
+      
+      .input-actions {
+        width: 100%;
+      }
+      
+      select, button {
+        flex: 1;
+      }
     }
   </style>
 </head>
 <body>
 
-  <header>مساعد الذكاء الاصطناعي الذهبي</header>
+  <header>
+    <i class="fas fa-crown logo"></i>
+    <span>GoldenArabicAI - مساعد الذكاء الاصطناعي الذهبي</span>
+  </header>
 
   <div class="chat-area">
-    <div class="chat-thread" id="chatThread">
-      <!-- Messages will appear here -->
+    <div class="welcome-banner">
+      <h2>مرحباً بك في GoldenArabicAI</h2>
+      <p>مساعدك الذكي باللغة العربية، جاهز للإجابة على أسئلتك ومساعدتك في مختلف المهام</p>
     </div>
 
-    <div class="input-section">
-      <textarea id="chatInput" placeholder="اكتب هنا..."></textarea>
-      <select id="actionType">
-        <option value="chat">إرسال رسالة</option>
-        <option value="image">إنشاء صورة</option>
-      </select>
-      <button onclick="handleAction()">تنفيذ</button>
+    <div class="chat-container">
+      <div class="chat-thread" id="chatThread">
+        <!-- Messages will appear here -->
+        <div class="chat-message ai">
+          <div class="message-header">
+            <i class="fas fa-robot message-icon"></i>
+            مساعد الذكاء الاصطناعي
+          </div>
+          أهلاً وسهلاً بك! أنا مساعدك الذكي GoldenArabicAI. كيف يمكنني مساعدتك اليوم؟
+        </div>
+      </div>
+
+      <div class="typing-indicator" id="typingIndicator">
+        <div class="message-header">
+          <i class="fas fa-robot message-icon"></i>
+          مساعد الذكاء الاصطناعي
+        </div>
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <div class="input-container">
+          <textarea id="chatInput" placeholder="اكتب رسالتك هنا..."></textarea>
+          <div class="input-actions">
+            <select id="actionType">
+              <option value="chat">محادثة نصية</option>
+              <option value="image">إنشاء صورة</option>
+              <option value="code">كتابة كود</option>
+              <option value="translate">ترجمة</option>
+            </select>
+            <button class="send-btn" onclick="handleAction()">
+              <i class="fas fa-paper-plane"></i>
+              إرسال
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="footer">
-    <a href="login-signup.html">تسجيل الدخول</a> |
-    <a href="nplans.html">الترقية</a> |
-    <a href="terms.html">الشروط</a> |
-    <a href="privacy.html">الخصوصية</a> |
-    <a href="refund.html">الاسترجاع</a>
+    <div class="footer-links">
+      <a href="login-signup.html"><i class="fas fa-user"></i> تسجيل الدخول</a>
+      <a href="nplans.html"><i class="fas fa-crown"></i> الترقية</a>
+      <a href="terms.html"><i class="fas fa-file-contract"></i> الشروط</a>
+      <a href="privacy.html"><i class="fas fa-shield-alt"></i> الخصوصية</a>
+      <a href="refund.html"><i class="fas fa-undo"></i> الاسترجاع</a>
+    </div>
+    <div class="copyright">
+      GoldenArabicAI &copy; 2023 - جميع الحقوق محفوظة
+    </div>
   </div>
 
   <script>
     const chatThread = document.getElementById("chatThread");
     const chatInput = document.getElementById("chatInput");
     const actionType = document.getElementById("actionType");
+    const typingIndicator = document.getElementById("typingIndicator");
 
-    function appendMessage(sender, text) {
+    // دالة لإضافة رسالة جديدة إلى المحادثة
+    function appendMessage(sender, text, type = "chat") {
       const msg = document.createElement("div");
       msg.className = `chat-message ${sender}`;
-      msg.textContent = text;
+      
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+      
+      let icon = "fas fa-user";
+      let senderName = "أنت";
+      
+      if (sender === "ai") {
+        icon = "fas fa-robot";
+        senderName = "مساعد الذكاء الاصطناعي";
+      }
+      
+      let content = text;
+      if (type === "image") {
+        content = `🖼️ طلبت إنشاء صورة: "${text}"`;
+      } else if (type === "code") {
+        content = `</> طلبت كتابة كود: "${text}"`;
+      } else if (type === "translate") {
+        content = `🌐 طلبت ترجمة: "${text}"`;
+      }
+      
+      msg.innerHTML = `
+        <div class="message-header">
+          <i class="${icon} message-icon"></i>
+          ${senderName}
+        </div>
+        ${content}
+        <div class="message-time">${timeString}</div>
+      `;
+      
       chatThread.appendChild(msg);
       chatThread.scrollTop = chatThread.scrollHeight;
     }
 
+    // دالة لمحاكاة استجابة الذكاء الاصطناعي
+    function simulateAIResponse(userMessage, action) {
+      // إظهار مؤشر الكتابة
+      typingIndicator.style.display = 'block';
+      chatThread.scrollTop = chatThread.scrollHeight;
+      
+      setTimeout(() => {
+        // إخفاء مؤشر الكتابة
+        typingIndicator.style.display = 'none';
+        
+        let response = "";
+        
+        if (action === "chat") {
+          const responses = [
+            `شكراً لرسالتك! "${userMessage}" - كيف يمكنني مساعدتك بشكل أفضل؟`,
+            `رائع! "${userMessage}" - هل تريد المزيد من المعلومات حول هذا الموضوع؟`,
+            `فهمت طلبك: "${userMessage}" - إليك ما يمكنني تقديمه...`,
+            `ممتع! "${userMessage}" - دعني أساعدك في ذلك.`
+          ];
+          response = responses[Math.floor(Math.random() * responses.length)];
+        } else if (action === "image") {
+          response = `🖼️ تم إنشاء الصورة بناءً على طلبك: "${userMessage}". يمكنك رؤية النتيجة أدناه.`;
+        } else if (action === "code") {
+          response = `</> إليك الكود الذي طلبت كتابته لـ: "${userMessage}". سأقوم بتنفيذه لك.`;
+        } else if (action === "translate") {
+          response = `🌐 تمت ترجمة النص: "${userMessage}" إلى اللغة المطلوبة. إليك النتيجة.`;
+        }
+        
+        appendMessage("ai", response, action);
+      }, 1500 + Math.random() * 2000); // وقت استجابة عشوائي بين 1.5-3.5 ثانية
+    }
+
+    // دالة التعامل مع الإجراءات
     function handleAction() {
       const text = chatInput.value.trim();
       const action = actionType.value;
 
-      if (!text) return;
-
-      appendMessage("user", text);
-      chatInput.value = "";
-
-      if (action === "chat") {
-        setTimeout(() => {
-          appendMessage("ai", `الذكاء الاصطناعي: شكراً لرسالتك "${text}"، كيف يمكنني مساعدتك؟`);
-        }, 1000);
-      } else if (action === "image") {
-        setTimeout(() => {
-          appendMessage("ai", `🖼️ جاري إنشاء صورة لـ: "${text}"`);
-        }, 1000);
+      if (!text) {
+        alert("يرجى كتابة رسالة قبل الإرسال");
+        return;
       }
+
+      appendMessage("user", text, action);
+      chatInput.value = "";
+      
+      // محاكاة استجابة الذكاء الاصطناعي
+      simulateAIResponse(text, action);
     }
-    <script src="index.js"></script>
+
+    // السماح بالإرسال بالضغط على Enter
+    chatInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        handleAction();
+      }
+    });
+
+    // التركيز على حقل الإدخال عند تحميل الصفحة
+    window.onload = function() {
+      chatInput.focus();
+    };
   </script>
+  
+  <!-- الاتصال بملف index.js -->
+  <script src="index.js"></script>
 
 </body>
 </html>
