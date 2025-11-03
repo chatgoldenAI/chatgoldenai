@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>محادثة الذكاء الاصطناعي</title>
+  <title>GoldenChatAI</title>
   <style>
     :root {
       --gold: #d4af37;
@@ -14,94 +14,98 @@
 
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
       background-color: var(--light);
       color: var(--dark);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
 
     header {
       background: linear-gradient(to left, #b8860b, #ffd700);
       color: white;
-      padding: 20px;
+      padding: 15px;
       text-align: center;
       font-size: 1.5em;
       font-weight: bold;
     }
 
-    .container {
-      max-width: 800px;
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 900px;
       margin: auto;
       padding: 20px;
     }
 
-    .chat-box {
+    .chat-thread {
+      flex: 1;
       background-color: white;
       border: 2px solid var(--gold);
       border-radius: 10px;
-      height: 300px;
-      overflow-y: auto;
       padding: 15px;
+      overflow-y: auto;
       margin-bottom: 15px;
     }
 
-    .input-area {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+    .chat-message {
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 6px;
     }
 
-    input[type="text"] {
+    .user {
+      background-color: #fff8dc;
+      text-align: right;
+    }
+
+    .ai {
+      background-color: #f0f0f0;
+      text-align: left;
+    }
+
+    .input-section {
+      display: flex;
+      gap: 10px;
+    }
+
+    textarea {
       flex: 1;
       padding: 10px;
-      border: 1px solid #ccc;
       border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: none;
+      height: 60px;
+    }
+
+    select, button {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    select {
+      background-color: #fff8dc;
     }
 
     button {
       background-color: var(--gold);
       color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
     }
 
     button:hover {
       background-color: #c9a02b;
     }
 
-    .image-gen {
-      margin-top: 30px;
-      background-color: #fffef5;
-      border: 1px solid #e0d8b0;
-      padding: 15px;
-      border-radius: 10px;
-    }
-
-    .image-gen h3 {
-      margin-top: 0;
-      color: #b8860b;
-    }
-
-    .action-buttons {
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    .action-buttons button {
-      margin: 10px;
-      width: 200px;
-    }
-
     .footer {
       background-color: #f0f0f0;
       text-align: center;
-      padding: 15px;
+      padding: 10px;
       font-size: 0.9em;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
       border-top: 1px solid #ccc;
     }
 
@@ -118,64 +122,64 @@
 </head>
 <body>
 
-  <header>محادثة الذكاء الاصطناعي - الإصدار المدرسي</header>
+  <header>مساعد الذكاء الاصطناعي الذهبي</header>
 
-  <div class="container">
-    <div class="chat-box" id="chatBox">
-      <!-- رسائل المحادثة ستظهر هنا -->
+  <div class="chat-area">
+    <div class="chat-thread" id="chatThread">
+      <!-- Messages will appear here -->
     </div>
 
-    <div class="input-area">
-      <input type="text" id="userInput" placeholder="اكتب رسالتك هنا..." />
-      <button onclick="sendMessage()">إرسال</button>
-    </div>
-
-    <div class="image-gen">
-      <h3>إنشاء صورة (مرة واحدة يومياً)</h3>
-      <input type="text" id="imagePrompt" placeholder="اكتب وصف الصورة..." />
-      <button onclick="generateImage()">إنشاء</button>
-      <div id="imageResult" style="margin-top: 10px;"></div>
-    </div>
-
-    <div class="action-buttons">
-      <button onclick="window.location.href='login-signup.html'">تسجيل الدخول / إنشاء حساب</button>
-      <button onclick="window.location.href='nplans.html'">الترقية إلى خطة مدفوعة</button>
+    <div class="input-section">
+      <textarea id="chatInput" placeholder="اكتب هنا..."></textarea>
+      <select id="actionType">
+        <option value="chat">إرسال رسالة</option>
+        <option value="image">إنشاء صورة</option>
+      </select>
+      <button onclick="handleAction()">تنفيذ</button>
     </div>
   </div>
 
   <div class="footer">
+    <a href="login-signup.html">تسجيل الدخول</a> |
+    <a href="nplans.html">الترقية</a> |
     <a href="terms.html">الشروط</a> |
     <a href="privacy.html">الخصوصية</a> |
     <a href="refund.html">الاسترجاع</a>
   </div>
 
   <script>
-    function sendMessage() {
-      const input = document.getElementById('userInput');
-      const chatBox = document.getElementById('chatBox');
-      const message = input.value.trim();
-      if (message) {
-        const userMsg = document.createElement('div');
-        userMsg.textContent = "أنت: " + message;
-        chatBox.appendChild(userMsg);
-        input.value = '';
+    const chatThread = document.getElementById("chatThread");
+    const chatInput = document.getElementById("chatInput");
+    const actionType = document.getElementById("actionType");
 
-        const aiMsg = document.createElement('div');
-        aiMsg.textContent = "الذكاء الاصطناعي: جاري المعالجة...";
-        chatBox.appendChild(aiMsg);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
+    function appendMessage(sender, text) {
+      const msg = document.createElement("div");
+      msg.className = `chat-message ${sender}`;
+      msg.textContent = text;
+      chatThread.appendChild(msg);
+      chatThread.scrollTop = chatThread.scrollHeight;
     }
 
-    function generateImage() {
-      const prompt = document.getElementById('imagePrompt').value.trim();
-      const result = document.getElementById('imageResult');
-      if (prompt) {
-        result.innerHTML = `<p>جاري إنشاء صورة لـ: <strong>${prompt}</strong></p>`;
-        // هنا يمكن ربط API لإنشاء الصور لاحقاً
+    function handleAction() {
+      const text = chatInput.value.trim();
+      const action = actionType.value;
+
+      if (!text) return;
+
+      appendMessage("user", text);
+      chatInput.value = "";
+
+      if (action === "chat") {
+        setTimeout(() => {
+          appendMessage("ai", `الذكاء الاصطناعي: شكراً لرسالتك "${text}"، كيف يمكنني مساعدتك؟`);
+        }, 1000);
+      } else if (action === "image") {
+        setTimeout(() => {
+          appendMessage("ai", `🖼️ جاري إنشاء صورة لـ: "${text}"`);
+        }, 1000);
       }
     }
-    <script src="index.js"></script>
   </script>
+
 </body>
 </html>
