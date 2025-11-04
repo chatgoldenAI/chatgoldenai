@@ -1,4 +1,4 @@
-// GoldenArabicAI Unified Backend — Refined Full Integration
+// GoldenArabicAI Unified Backend — Full Integration & Stable DALL·E 3
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -43,10 +43,10 @@ app.use(passport.session());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve current folder as root (includes index.html)
+// Serve current folder as root (includes index.html). maxAge:0 = no CDN/browser cache.
 app.use(express.static(__dirname, { maxAge: 0 }));
 
-// =============== OAuth Config ===============
+// =============== OAuth Config (optional) ===============
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   passport.use(
     new GoogleStrategy(
@@ -63,7 +63,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           email: profile.emails?.[0]?.value || "",
           photo: profile.photos?.[0]?.value || "",
           provider: "google",
-          plan: "free"
+          plan: "free",
         };
         done(null, user);
       }
@@ -94,7 +94,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
           email: profile.emails?.[0]?.value || `${profile.username}@github.user`,
           photo: profile.photos?.[0]?.value || "",
           provider: "github",
-          plan: "free"
+          plan: "free",
         };
         done(null, user);
       }
@@ -119,7 +119,7 @@ app.post("/logout", (req, res) => {
   });
 });
 
-// =============== User Info ===============
+// =============== User Info (optional) ===============
 app.get("/api/me", async (req, res) => {
   if (!req.user) {
     return res.json({ loggedIn: false, plan: "free", balance: 0 });
@@ -132,32 +132,44 @@ app.get("/api/me", async (req, res) => {
     photo: req.user.photo || "/default-avatar.png",
     plan: "free",
     balance: 0,
-    joinDate: new Date().toISOString().split("T")[0]
+    joinDate: new Date().toISOString().split("T")[0],
   });
 });
 
 // =============== OpenAI Setup ===============
+if (!process.env.OPENAI_API_KEY) {
+  console.warn("⚠️  OPENAI_API_KEY is not set. /api/chat will fail for AI calls.");
+}
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const arabicPrompts = {
   chat: `أنت مساعد ذكي عربي متعدد الاستخدامات اسمه "GoldenArabicAI".
   أجب باحترافية ووضوح باللغة العربية.`,
-  image: `أنت مساعد لتحسين وصف الصور لـ DALL-E 3.`,
+  image: `أنت مساعد لتحسين وصف الصور لـ DALL·E 3.`,
   code: `أنت خبير في البرمجة، أنشئ أكواد نظيفة وفعالة.`,
-  translate: `أنت مترجم محترف، ترجم النص بدقة مع الحفاظ على المعنى.`
+  translate: `أنت مترجم محترف، ترجم النص بدقة مع الحفاظ على المعنى.`,
 };
+
+// =============== Helpers ===============
+function sendError(res, status, msgAr, debug = null) {
+  if (debug) console.error("[API ERROR]", debug);
+  return res.status(status).json({ error: msgAr, arabicError: msgAr });
+}
 
 // =============== Core AI Endpoint ===============
 app.post("/api/chat", async (req, res) => {
   const { message, actionType, model = "gpt-4o-mini" } = req.body;
 
-  if (!message || message.trim() === "") {
-    return res.status(400).json({ error: "الرسالة فارغة" });
+  if (!message || typeof message !== "string" || message.trim() === "") {
+    return sendError(res, 400, "الرسالة فارغة");
+  }
+  if (!process.env.OPENAI_API_KEY) {
+    return sendError(res, 500, "مفتاح OpenAI غير مضبوط على الخادم.");
   }
 
   try {
     let result;
-    switch (actionType) {
+    switch ((actionType || "chat").toLowerCase()) {
       case "image":
         result = await handleImageGeneration(message);
         break;
@@ -170,11 +182,14 @@ app.post("/api/chat", async (req, res) => {
       default:
         result = await handleChatCompletion(message, model);
     }
-
     res.json(result);
   } catch (error) {
-    console.error("AI Error:", error);
-    res.status(500).json({ error: "حدث خطأ أثناء المعالجة" });
+    // Try to surface the real cause if available
+    const msg =
+      error?.response?.data?.error?.message ||
+      error?.message ||
+      "حدث خطأ أثناء المعالجة";
+    return sendError(res, 500, msg, error);
   }
 });
 
@@ -184,36 +199,53 @@ async function handleChatCompletion(message, model) {
     model,
     messages: [
       { role: "system", content: arabicPrompts.chat },
-      { role: "user", content: message }
+      { role: "user", content: message },
     ],
     max_tokens: 1200,
     temperature: 0.8,
   });
 
-  const reply = completion.choices[0]?.message?.content || "عذراً، لم أستطع توليد رد.";
+  const reply = completion.choices?.[0]?.message?.content || "عذراً، لم أستطع توليد رد.";
   return { type: "text", content: reply, timestamp: new Date().toISOString() };
 }
 
 async function handleImageGeneration(prompt) {
-  const enhancement = await openai.chat.completions.create({
+  // Light enhancement for DALL·E 3 in English
+  const enhanced = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
-      { role: "system", content: arabicPrompts.image },
-      { role: "user", content: `قم بتحسين هذا الوصف: "${prompt}"` }
+      {
+        role: "system",
+        content:
+          "You are a DALL·E 3 prompt improver. Rewrite prompts in clear, concise English. No markdown.",
+      },
+      { role: "user", content: prompt },
     ],
+    max_tokens: 180,
+    temperature: 0.6,
   });
 
-  const enhancedPrompt = enhancement.choices[0]?.message?.content || prompt;
-  const image = await openai.images.generate({
+  const enhancedPrompt = enhanced.choices?.[0]?.message?.content?.trim() || prompt;
+
+  // ✅ DALL·E 3 generation
+  const img = await openai.images.generate({
     model: "dall-e-3",
     prompt: enhancedPrompt,
-    size: "1024x1024"
+    size: "1024x1024", // valid sizes: "1024x1024", "1792x1024", "1024x1792"
+    quality: "standard", // or "hd"
+    n: 1,
   });
+
+  const url = img.data?.[0]?.url;
+  if (!url) throw new Error("لم يتم إرجاع رابط الصورة من DALL·E 3");
 
   return {
     type: "image",
-    content: image.data[0]?.url,
-    message: `تم إنشاء الصورة بناءً على الوصف: "${prompt}"`
+    content: url,
+    prompt,
+    enhancedPrompt,
+    timestamp: new Date().toISOString(),
+    message: `تم إنشاء الصورة بنجاح بناءً على طلبك: "${prompt}"`,
   };
 }
 
@@ -222,12 +254,12 @@ async function handleCodeGeneration(message) {
     model: "gpt-4",
     messages: [
       { role: "system", content: arabicPrompts.code },
-      { role: "user", content: message }
+      { role: "user", content: message },
     ],
     temperature: 0.3,
   });
 
-  const code = completion.choices[0]?.message?.content || "// لم يتم توليد كود";
+  const code = completion.choices?.[0]?.message?.content || "// لم يتم توليد كود";
   return { type: "code", content: code, message: "تم إنشاء الكود بنجاح" };
 }
 
@@ -236,33 +268,39 @@ async function handleTranslation(message) {
     model: "gpt-4",
     messages: [
       { role: "system", content: arabicPrompts.translate },
-      { role: "user", content: message }
+      { role: "user", content: message },
     ],
     temperature: 0.2,
   });
 
-  const translation = completion.choices[0]?.message?.content || "لم يتم الترجمة";
+  const translation = completion.choices?.[0]?.message?.content || "لم يتم الترجمة";
   return { type: "translation", content: translation };
 }
 
 // =============== Routes ===============
 app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
+// Direct access for other pages like /plans.html, /login-signup.html, etc.
 app.get("/:page", (req, res) => {
-  const filePath = path.join(__dirname, `${req.params.page}.html`);
-  if (fs.existsSync(filePath)) return res.sendFile(filePath);
-  res.status(404).send("الصفحة غير موجودة");
+  const safePage = (req.params.page || "").replace(/[^a-zA-Z0-9-_]/g, "");
+  const filePathHtml = path.join(__dirname, `${safePage}.html`);
+  if (fs.existsSync(filePathHtml)) return res.sendFile(filePathHtml);
+  return res.status(404).send("الصفحة غير موجودة");
 });
 
-app.get("/health", (_req, res) => res.json({
-  status: "OK",
-  service: "GoldenArabicAI",
-  time: new Date().toISOString()
-}));
+// Health check
+app.get("/health", (_req, res) =>
+  res.json({
+    status: "OK",
+    service: "GoldenArabicAI",
+    time: new Date().toISOString(),
+  })
+);
 
 // =============== Start Server ===============
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 GoldenArabicAI running on port ${PORT}`);
-  console.log(`✅ Serving index.html and AI endpoints (public access enabled)`);
+  console.log(`✅ Serving static files & AI endpoints (public access enabled)`);
+  console.log(`🖼️ DALL·E 3 image generation active`);
 });
