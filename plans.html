@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>الخطط والأسعار • GoldenArabicAI</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --gold:#d4af37;
+      --gold-dark:#b8860b;
+      --bg:#fffefb;
+      --bg-alt:#faf9f6;
+      --text:#1e1e1e;
+      --muted:#6f6f6f;
+      --border:#e7e3da;
+      --radius:16px;
+      --shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:'Cairo',system-ui,Arial,sans-serif;
+      color:var(--text); background:linear-gradient(180deg,#fffdf6 0%,#f9f7f1 100%);
+    }
+
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:20;
+      background:#fff; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 20px;
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; color:var(--gold-dark); font-size:1.2rem}
+    .brand i{color:var(--gold)}
+    .header-actions{display:flex; align-items:center; gap:10px}
+    .btn-ghost{
+      border:1px solid var(--border); background:var(--bg-alt);
+      padding:8px 14px; border-radius:999px; cursor:pointer; font-weight:700;
+    }
+    .btn-gold{
+      background:linear-gradient(90deg,var(--gold-dark),var(--gold));
+      color:#fff; border:none; padding:9px 16px; border-radius:999px; cursor:pointer; font-weight:800;
+      box-shadow:0 6px 18px rgba(212,175,55,.25);
+    }
+    .btn-gold:hover{transform:translateY(-1px); box-shadow:0 8px 22px rgba(212,175,55,.35)}
+    a.btn-gold, a.btn-ghost{display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:inherit}
+
+    /* Hero */
+    .hero{
+      max-width:1100px; margin:40px auto 10px; padding:0 16px; text-align:center;
+    }
+    .headline{
+      font-size:clamp(26px,4vw,40px); line-height:1.2; font-weight:800; color:#171513;
+    }
+    .tagline{color:var(--muted); margin-top:10px; font-size:clamp(14px,2.2vw,17px)}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      background:#fff8e0; color:#6a5507; border:1px solid #f1e1a8; padding:6px 12px; border-radius:999px;
+      font-weight:700; margin:14px auto 0;
+    }
+
+    /* Pricing grid */
+    .grid{
+      max-width:1100px; margin:26px auto 40px; padding:0 16px;
+      display:grid; grid-template-columns:repeat(3,1fr); gap:18px;
+    }
+    @media (max-width:980px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      background:#fff; border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:22px; position:relative; overflow:hidden;
+    }
+    .card.highlight{
+      border:2px solid var(--gold); box-shadow:0 16px 40px rgba(212,175,55,.18);
+    }
+    .ribbon{
+      position:absolute; top:14px; left:14px;
+      background:linear-gradient(90deg,var(--gold-dark),var(--gold));
+      color:#fff; padding:6px 12px; border-radius:999px; font-size:.85rem; font-weight:800;
+      box-shadow:0 6px 18px rgba(212,175,55,.25);
+    }
+
+    .plan-name{font-size:1.3rem; font-weight:800; color:#1a1407; display:flex; align-items:center; gap:10px}
+    .plan-desc{color:var(--muted); margin:6px 0 14px}
+    .price{
+      display:flex; align-items:flex-end; gap:6px; margin:4px 0 14px;
+    }
+    .price .amount{font-size:2rem; font-weight:900; color:#1d1d1d}
+    .price .per{color:var(--muted); font-weight:700}
+    .feature{
+      display:flex; align-items:flex-start; gap:10px; margin:10px 0; color:#2b2b2b;
+    }
+    .feature i{color:var(--gold-dark); margin-top:4px}
+    .muted{color:#8e8e8e}
+    .cta{margin-top:16px; display:flex; gap:8px; flex-wrap:wrap}
+
+    /* Comparison section */
+    .compare{
+      max-width:1100px; margin:10px auto 40px; padding:0 16px;
+      background:#fff; border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
+    }
+    .compare table{width:100%; border-collapse:collapse; overflow:hidden}
+    .compare th, .compare td{
+      padding:14px 12px; border-bottom:1px solid var(--border); text-align:center;
+      font-weight:700;
+    }
+    .compare th:first-child, .compare td:first-child{ text-align:right }
+    .compare thead th{
+      background:#fffaf0; color:#5f4a07;
+    }
+
+    /* FAQ */
+    .faq{max-width:1100px; margin:0 auto 60px; padding:0 16px}
+    details{
+      background:#fff; border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:10px;
+      box-shadow:var(--shadow);
+    }
+    summary{cursor:pointer; font-weight:800}
+    details p{color:var(--muted); margin:8px 0 0}
+
+    /* Footer */
+    footer{
+      text-align:center; color:var(--muted); padding:26px 16px 40px;
+    }
+    footer a{color:var(--gold-dark); text-decoration:none; font-weight:800}
+    footer a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand"><i class="fas fa-crown"></i><span>GoldenArabicAI</span></div>
+    <div class="header-actions">
+      <a class="btn-ghost" href="/"><i class="fa-solid fa-comments"></i> العودة للمحادثة</a>
+      <a class="btn-gold" href="/login-signup.html"><i class="fa-solid fa-user"></i> تسجيل الدخول</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="badge"><i class="fa-solid fa-bolt"></i> خطط بسيطة — قيمة قوية</div>
+    <h1 class="headline">اختر الخطة المناسبة لك وابدأ رحلتك مع الذكاء الاصطناعي الذهبي</h1>
+    <p class="tagline">واجهة عربية بالكامل • تجربة سريعة • صور بجودة عالية • دعم GPT حديث</p>
+  </section>
+
+  <!-- Pricing Grid -->
+  <section class="grid">
+
+    <!-- Free -->
+    <article class="card">
+      <div class="plan-name"><i class="fa-regular fa-gem"></i> مجاني</div>
+      <div class="plan-desc">أفضل بداية لاختبار التجربة بدون تكلفة</div>
+      <div class="price">
+        <div class="amount">0$</div><div class="per">/ مجاناً</div>
+      </div>
+      <div class="feature"><i class="fa-solid fa-check"></i> الوصول إلى <b>GPT-4-mini</b> للمحادثة الأساسية</div>
+      <div class="feature"><i class="fa-solid fa-check"></i> <b>1</b> إنشاء صورة يوميًا</div>
+      <div class="feature"><i class="fa-solid fa-check"></i> دعم اللغة العربية الكامل</div>
+      <div class="feature muted"><i class="fa-solid fa-minus"></i> بدون مزايا متقدمة</div>
+      <div class="cta">
+        <a class="btn-ghost" href="/"><i class="fa-solid fa-play"></i> ابدأ الآن</a>
+      </div>
+    </article>
+
+    <!-- Plus -->
+    <article class="card highlight">
+      <div class="ribbon">الأكثر اختيارًا</div>
+      <div class="plan-name"><i class="fa-solid fa-crown"></i> +Plus</div>
+      <div class="plan-desc">قيمة ممتازة لمستخدمين يحتاجون قوة أكبر</div>
+      <div class="price">
+        <div class="amount">4.9$</div><div class="per">/ شهريًا</div>
+      </div>
+      <div class="feature"><i class="fa-solid fa-check"></i> دردشة مع <b>GPT-5</b></div>
+      <div class="feature"><i class="fa-solid fa-check"></i> <b>5</b> إنشاءات صور يوميًا</div>
+      <div class="feature"><i class="fa-solid fa-check"></i> الترجمة مضمنة</div>
+      <div class="feature"><i class="fa-solid fa-check"></i> أولوية أعلى للأداء</div>
+      <div class="cta">
+        <a class="btn-gold" href="/upgrade?plan=plus"><i class="fa-solid fa-arrow-up-right-from-square"></i> ترقية إلى Plus</a>
+        <a class="btn-ghost" href="#compare"><i class="fa-solid fa-table-list"></i> قارن الخطط</a>
+      </div>
+    </article>
+
+    <!-- Pro -->
+    <article class="card">
+      <div class="plan-name"><i class="fa-solid fa-star"></i> Pro</div>
+      <div class="plan-desc">أقصى قوة — للمحترفين وصنّاع المحتوى</div>
+      <div class="price">
+        <div class="amount">—</div><div class="per">/ شهريًا</div>
+      </div>
+      <div class="feature"><i class="fa-solid fa-check"></i> وصول كامل إلى <b>GPT-5</b> دون قيود</div>
+      <div class="feature"><i class="fa-solid fa-check"></i> توليد صور <b>HD</b> بجودة عالية</div>
+      <div class="feature"><i class="fa-solid fa-check"></i> إنشاءات غير محدودة + كل الميزات المميزة</div>
+      <div class="feature"><i class="fa-solid fa-check"></i> أولوية قصوى ودعم أسرع</div>
+      <div class="cta">
+        <a class="btn-gold" href="/upgrade?plan=pro"><i class="fa-solid fa-rocket"></i> انتقل إلى Pro</a>
+        <a class="btn-ghost" href="#faq"><i class="fa-solid fa-circle-question"></i> الأسئلة الشائعة</a>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- Comparison -->
+  <section id="compare" class="compare" aria-label="مقارنة الخطط">
+    <table>
+      <thead>
+        <tr>
+          <th>الميزة</th>
+          <th>مجاني</th>
+          <th>Plus</th>
+          <th>Pro</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>نموذج المحادثة</td>
+          <td>GPT-4-mini</td>
+          <td>GPT-5</td>
+          <td>GPT-5 (كامل)</td>
+        </tr>
+        <tr>
+          <td>إنشاء الصور</td>
+          <td>1 يوميًا</td>
+          <td>5 يوميًا</td>
+          <td>غير محدود • جودة HD</td>
+        </tr>
+        <tr>
+          <td>الترجمة</td>
+          <td>—</td>
+          <td>مضمنة</td>
+          <td>مضمنة</td>
+        </tr>
+        <tr>
+          <td>الأولوية والأداء</td>
+          <td>عادي</td>
+          <td>مرتفع</td>
+          <td>أقصى</td>
+        </tr>
+        <tr>
+          <td>الدعم</td>
+          <td>أساسي</td>
+          <td>أولوية</td>
+          <td>ممتاز</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq">
+    <details>
+      <summary>هل يمكنني البدء بالخطة المجانية ثم الترقية لاحقًا؟</summary>
+      <p>نعم، يمكنك الترقية إلى Plus أو Pro في أي وقت. لن تفقد محادثاتك.</p>
+    </details>
+    <details>
+      <summary>كيف يتم احتساب إنشاءات الصور اليومية؟</summary>
+      <p>يتم تجديد الحصة يوميًا بالتوقيت العالمي. عند الوصول للسقف، يمكنك الانتظار لليوم التالي أو الترقية.</p>
+    </details>
+    <details>
+      <summary>هل توجد فواتير سنوية بخصم؟</summary>
+      <p>الأسعار المعروضة شهرية. قد نوفر سنويًا لاحقًا — تابع صفحة الخطط.</p>
+    </details>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    باستخدامك للموقع، فإنك توافق على
+    <a href="/terms.html">الشروط</a> •
+    <a href="/privacy.html">الخصوصية</a> •
+    <a href="/refund.html">الاسترجاع</a>
+    <br><br>
+    © <span id="year"></span> GoldenArabicAI
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Optional: if you want to highlight the Plus card when arriving with ?plan=plus
+    const params = new URLSearchParams(location.search);
+    const plan = params.get('plan');
+    if (plan === 'plus') {
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('highlight'));
+      const plusCard = [...document.querySelectorAll('.card')].find(c => c.querySelector('.plan-name')?.textContent.includes('Plus'));
+      if (plusCard) plusCard.classList.add('highlight');
+      plusCard?.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  </script>
+</body>
+</html>
