@@ -26,9 +26,35 @@
       background: var(--bg);
     }
 
+    /* Topbar (policies + login) */
+    .topbar {
+      position: fixed; inset: 0 0 auto 0; height: 36px;
+      background: #fff; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 20; padding: 0 12px;
+    }
+    .topbar-inner {
+      width: 100%; max-width: 1200px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px;
+      font-size: 0.92rem;
+    }
+    .policy-links {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .policy-links a {
+      color: #4a4a4a; text-decoration: none; font-weight: 700;
+    }
+    .policy-links a:hover { color: var(--gold-dark); text-decoration: underline; }
+    .login-btn {
+      background: #fff; border: 1px solid var(--border); color: #333;
+      padding: 6px 12px; border-radius: 999px; font-weight: 800; cursor: pointer;
+    }
+    .login-btn:hover { border-color: var(--gold); color: var(--gold-dark); }
+
     /* Header */
     header {
-      position: fixed; inset: 0 0 auto 0; height: 64px;
+      position: fixed; inset: 36px 0 auto 0; height: 64px; /* moved down below topbar */
       background: var(--bg); border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 18px; z-index: 10;
@@ -47,7 +73,7 @@
 
     /* Chat area */
     .chat-area {
-      position: fixed; top: 64px; bottom: 96px; left: 0; right: 0;
+      position: fixed; top: calc(36px + 64px); bottom: 96px; left: 0; right: 0; /* offset for topbar + header */
       background: var(--bg-alt);
       overflow-y: auto; scroll-behavior: smooth;
       padding: 22px 16px;
@@ -109,10 +135,25 @@
       .msg { max-width: 95%; }
       header { padding: 0 12px; }
       .chat-area { padding: 18px 10px; }
+      .topbar-inner { flex-direction: column; height: 36px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Topbar with policies + login -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <nav class="policy-links" aria-label="روابط السياسات">
+        <a href="refund.html"><i class="fa-solid fa-rotate-left"></i> سياسة الاسترجاع</a>
+        <a href="terms.html"><i class="fa-solid fa-file-contract"></i> الشروط</a>
+        <a href="privacy.html"><i class="fa-solid fa-shield-halved"></i> الخصوصية</a>
+      </nav>
+      <button class="login-btn" onclick="location.href='login-signup.html'">
+        <i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول
+      </button>
+    </div>
+  </div>
 
   <!-- Header -->
   <header>
