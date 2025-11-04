@@ -12,272 +12,323 @@
       --bg: #fffefb;
       --bg-alt: #faf9f6;
       --text: #1c1c1c;
-      --border: #e0e0e0;
-      --radius: 10px;
+      --border: #e6e3db;
+      --radius: 12px;
       --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.2s ease; }
-    html, body { height: 100%; width: 100%; font-family: "Segoe UI", Tahoma, Arial, sans-serif; background: var(--bg); color: var(--text); }
-
-    /* HEADER */
-    header {
-      position: fixed; top: 0; width: 100%;
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      color: var(--text);
       background: var(--bg);
-      border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 20px; z-index: 10;
-      box-shadow: var(--shadow);
     }
 
-    .logo {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.4em; font-weight: bold; color: var(--gold-dark);
+    /* Header */
+    header {
+      position: fixed; inset: 0 0 auto 0; height: 64px;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 18px; z-index: 10;
     }
+    .logo { display:flex; align-items:center; gap:10px; font-weight:700; color:var(--gold-dark); }
     .logo i { color: var(--gold); }
-
-    .header-controls { display: flex; align-items: center; gap: 12px; }
-
+    .header-actions { display:flex; align-items:center; gap:10px; }
     .upgrade-btn {
       background: linear-gradient(to left, var(--gold-dark), var(--gold));
-      border: none; color: white; padding: 8px 16px;
-      border-radius: 20px; cursor: pointer; font-weight: bold;
+      border: 0; color: #fff; padding: 8px 14px; border-radius: 20px; font-weight: 700; cursor: pointer;
     }
-    .upgrade-btn:hover { box-shadow: 0 0 10px rgba(212,175,55,0.4); transform: translateY(-2px); }
+    .upgrade-btn:hover { box-shadow: 0 0 10px rgba(212,175,55,.35); transform: translateY(-1px); }
+    .user-profile { display:flex; align-items:center; gap:8px; padding:6px 10px; border:1px solid var(--border); border-radius: 24px; background:var(--bg-alt); }
+    .user-avatar { width:32px; height:32px; border-radius:50%; border:2px solid var(--gold); }
+    .user-info { font-size:.82rem; }
 
-    .user-profile {
-      display: flex; align-items: center; background: var(--bg-alt);
-      border-radius: 20px; border: 1px solid var(--border);
-      padding: 5px 10px; gap: 8px;
-    }
-    .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--gold); }
-    .user-info { font-size: 0.8em; text-align: right; }
-
-    /* CHAT AREA */
-    .chat-container {
-      position: absolute;
-      top: 60px; bottom: 90px; right: 0; left: 0;
-      display: flex; justify-content: center;
+    /* Chat area */
+    .chat-area {
+      position: fixed; top: 64px; bottom: 96px; left: 0; right: 0;
       background: var(--bg-alt);
-      overflow-y: auto;
-      scroll-behavior: smooth;
-      padding: 20px;
+      overflow-y: auto; scroll-behavior: smooth;
+      padding: 22px 16px;
+      display:flex; justify-content:center;
+    }
+    .chat-thread {
+      width: 100%; max-width: 980px;
+      display: flex; flex-direction: column; gap: 16px;
     }
 
-    .chat-inner {
-      width: 100%;
-      max-width: 950px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
+    .msg {
+      border-radius: var(--radius); padding: 14px 16px; line-height: 1.65;
+      box-shadow: var(--shadow); max-width: 85%; word-wrap: break-word;
+      animation: fadeIn .25s ease;
     }
+    @keyframes fadeIn { from {opacity:0; transform: translateY(8px);} to {opacity:1; transform: translateY(0);} }
 
-    .chat-message {
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      max-width: 85%;
-      line-height: 1.6;
-      box-shadow: var(--shadow);
-      animation: fadeIn 0.3s ease;
-      word-wrap: break-word;
-    }
-    @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
-
-    .chat-message.user {
-      background: linear-gradient(135deg, #f9e79f, #fff8dc);
-      align-self: flex-end;
-    }
-    .chat-message.ai {
-      background: #fff;
-      border: 1px solid var(--border);
-      align-self: flex-start;
-    }
-
-    .message-header {
-      font-weight: bold;
-      color: var(--gold-dark);
-      margin-bottom: 6px;
-      display: flex; align-items: center; gap: 8px;
-    }
-
-    .message-time { font-size: 0.8em; color: #888; margin-top: 5px; text-align: left; }
-
-    .image-preview {
-      max-width: 100%; border-radius: 8px; margin-top: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+    .msg.ai { align-self: flex-start; background:#fff; border:1px solid var(--border); }
+    .msg.user { align-self: flex-end; background: linear-gradient(135deg, #f9e79f, #fff8dc); }
+    .msg .head { font-weight:700; color: var(--gold-dark); margin-bottom: 6px; display:flex; align-items:center; gap:8px; }
+    .msg .time { margin-top: 6px; color:#8c8c8c; font-size:.82rem; text-align: left; }
 
     .code-block {
-      background: #f8f8f8; border: 1px solid #ddd;
-      border-radius: 6px; padding: 10px;
-      font-family: "Courier New", monospace; font-size: 0.9em;
-      margin-top: 10px; overflow-x: auto;
+      background:#f6f6f6; border:1px solid #e2e2e2; border-radius:8px;
+      padding: 10px; margin-top: 10px; font-family: "Courier New", monospace; font-size:.92rem; overflow-x:auto;
     }
+    .image-preview { max-width:100%; border-radius:10px; margin-top:10px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
 
-    /* TYPING INDICATOR */
+    /* Thinking bubble */
     .thinking {
-      background: #fff; border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 18px; width: fit-content;
-      color: #888; align-self: flex-start;
-      box-shadow: var(--shadow);
-      display: none;
+      display: none; width: fit-content; align-self:flex-start;
+      background:#fff; border:1px solid var(--border); border-radius: var(--radius);
+      padding: 12px 14px; color:#888; box-shadow: var(--shadow);
     }
 
-    /* INPUT */
-    .input-section {
-      position: fixed;
-      bottom: 0; width: 100%;
-      background: var(--bg);
-      border-top: 1px solid var(--border);
-      display: flex; justify-content: center;
-      padding: 15px 20px;
+    /* Input */
+    .input-bar {
+      position: fixed; inset: auto 0 0 0; height: 96px;
+      background: var(--bg); border-top:1px solid var(--border);
+      display:flex; justify-content:center; align-items:center; padding: 10px 16px;
     }
-
-    .input-inner {
-      width: 100%; max-width: 950px;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-
+    .input-inner { width:100%; max-width:980px; display:flex; flex-direction:column; gap: 8px; }
     textarea {
-      width: 100%; resize: none;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      font-size: 1em; background: var(--bg-alt);
-      height: 70px; transition: border 0.3s;
+      width:100%; height:70px; resize:none; font: inherit; font-size:1rem;
+      padding: 12px 14px; border-radius: var(--radius);
+      border:1px solid var(--border); background: var(--bg-alt);
     }
-
-    textarea:focus {
-      outline: none; border-color: var(--gold);
-      box-shadow: 0 0 0 2px rgba(212,175,55,0.2);
+    textarea:focus { outline:none; border-color: var(--gold); box-shadow: 0 0 0 2px rgba(212,175,55,.18); }
+    .row { display:flex; gap:8px; }
+    select, button { border-radius: var(--radius); font-weight:700; border:1px solid var(--border); }
+    select { flex:1; background: var(--bg-alt); padding: 10px; }
+    .send {
+      border:0; background: linear-gradient(to left, var(--gold-dark), var(--gold)); color:#fff;
+      padding: 10px 18px; display:flex; align-items:center; gap:6px; cursor:pointer;
     }
-
-    .input-actions {
-      display: flex; gap: 8px;
-    }
-
-    select, button {
-      border: none; border-radius: var(--radius);
-      font-weight: bold; cursor: pointer;
-    }
-
-    select {
-      flex: 1; background: var(--bg-alt);
-      border: 1px solid var(--border);
-      padding: 10px;
-    }
-
-    .send-btn {
-      background: linear-gradient(to left, var(--gold-dark), var(--gold));
-      color: #fff; padding: 10px 20px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .send-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .send-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .send:disabled { opacity:.6; cursor:not-allowed; }
 
     @media (max-width: 768px) {
-      header { flex-direction: column; gap: 6px; }
-      .chat-message { max-width: 95%; }
+      .msg { max-width: 95%; }
+      header { padding: 0 12px; }
+      .chat-area { padding: 18px 10px; }
     }
   </style>
 </head>
 <body>
 
+  <!-- Header -->
   <header>
     <div class="logo"><i class="fas fa-crown"></i><span>GoldenArabicAI</span></div>
-    <div class="header-controls">
-      <button class="upgrade-btn" onclick="window.location.href='plans.html'">ترقية الخطة</button>
+    <div class="header-actions">
+      <button class="upgrade-btn" onclick="location.href='plans.html'">ترقية الخطة</button>
       <div class="user-profile" id="userProfile" style="display:none;">
-        <img src="" alt="Profile" class="user-avatar" id="userAvatar">
+        <img src="" id="userAvatar" class="user-avatar" alt="Avatar">
         <div class="user-info">
-          <div id="userName"></div>
+          <div id="userName">ضيف</div>
           <div id="userPlan">مجاني</div>
         </div>
       </div>
     </div>
   </header>
 
-  <div class="chat-container">
-    <div class="chat-inner" id="chatThread">
-      <div class="chat-message ai">
-        <div class="message-header"><i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي</div>
-        <div>مرحباً بك في <b>GoldenArabicAI</b>! كيف يمكنني مساعدتك اليوم؟</div>
+  <!-- Chat -->
+  <main class="chat-area" id="scroller">
+    <section class="chat-thread" id="thread">
+      <div class="msg ai">
+        <div class="head"><i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي</div>
+        مرحباً بك! أنا <b>GoldenArabicAI</b> — كيف أقدر أساعدك اليوم؟
       </div>
-    </div>
-    <div class="thinking" id="thinkingBubble">يفكر...</div>
-  </div>
+    </section>
+    <div class="thinking" id="thinking">يفكر...</div>
+  </main>
 
-  <div class="input-section">
+  <!-- Input -->
+  <footer class="input-bar">
     <div class="input-inner">
-      <textarea id="chatInput" placeholder="اكتب رسالتك هنا..."></textarea>
-      <div class="input-actions">
-        <select id="actionType">
+      <textarea id="input" placeholder="اكتب رسالتك هنا..."></textarea>
+      <div class="row">
+        <select id="mode">
           <option value="chat">محادثة نصية</option>
           <option value="image">إنشاء صورة</option>
           <option value="code">كتابة كود</option>
           <option value="translate">ترجمة</option>
         </select>
-        <button class="send-btn" id="sendBtn" onclick="handleAction()">
-          <i class="fas fa-paper-plane"></i> إرسال
-        </button>
+        <button class="send" id="send"><i class="fas fa-paper-plane"></i> إرسال</button>
       </div>
     </div>
-  </div>
+  </footer>
 
   <script>
-    const chatThread = document.getElementById("chatThread");
-    const chatInput = document.getElementById("chatInput");
-    const thinkingBubble = document.getElementById("thinkingBubble");
-    let activeTyping = null;
+    // ------- Elements
+    const thread = document.getElementById('thread');
+    const scroller = document.getElementById('scroller');
+    const thinking = document.getElementById('thinking');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
+    const modeSel = document.getElementById('mode');
 
-    function scrollToBottom() {
-      chatThread.scrollTop = chatThread.scrollHeight;
+    // ------- State
+    let typingInterval = null;
+
+    // ------- Helpers
+    const nowTime = () => new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+    const scrollBottom = () => { scroller.scrollTop = scroller.scrollHeight; };
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
     }
 
-    function typeMessage(el, text, speed = 20) {
+    function bubble(sender, html) {
+      const el = document.createElement('div');
+      el.className = `msg ${sender}`;
+      el.innerHTML = html;
+      thread.appendChild(el);
+      scrollBottom();
+      return el;
+    }
+
+    function addUserMessage(text) {
+      bubble('user', `
+        <div class="head"><i class="fas fa-user"></i> أنت</div>
+        <div>${escapeHtml(text)}</div>
+        <div class="time">${nowTime()}</div>
+      `);
+    }
+
+    function addAITextStreaming(text) {
+      const el = bubble('ai', `
+        <div class="head"><i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي</div>
+        <div class="content"></div>
+        <div class="time">${nowTime()}</div>
+      `);
+      const content = el.querySelector('.content');
       let i = 0;
-      activeTyping = setInterval(() => {
+      clearInterval(typingInterval);
+      typingInterval = setInterval(() => {
         if (i < text.length) {
-          el.textContent += text[i++];
-          scrollToBottom();
+          content.textContent += text[i++];
+          scrollBottom();
         } else {
-          clearInterval(activeTyping);
-          activeTyping = null;
+          clearInterval(typingInterval);
+          typingInterval = null;
         }
-      }, speed);
+      }, 18); // ChatGPT-like speed
     }
 
-    function appendAIMessage(text) {
-      const msg = document.createElement("div");
-      msg.className = "chat-message ai";
-      msg.innerHTML = `
-        <div class="message-header"><i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي</div>
-        <div class="message-content"></div>`;
-      chatThread.appendChild(msg);
-      const content = msg.querySelector(".message-content");
-      typeMessage(content, text);
+    function addAIImage(url, caption) {
+      bubble('ai', `
+        <div class="head"><i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي</div>
+        <div>${escapeHtml(caption || "تم إنشاء الصورة")}</div>
+        <img class="image-preview" src="${url}" alt="الصورة المولدة">
+        <div class="time">${nowTime()}</div>
+      `);
     }
 
-    const originalHandle = handleAction;
-    window.handleAction = async function() {
-      if (activeTyping) { clearInterval(activeTyping); activeTyping = null; }
-      const text = chatInput.value.trim();
+    function addAICode(code, leadText) {
+      bubble('ai', `
+        <div class="head"><i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي</div>
+        ${leadText ? `<div>${escapeHtml(leadText)}</div>` : ""}
+        <pre class="code-block">${escapeHtml(code)}</pre>
+        <div class="time">${nowTime()}</div>
+      `);
+    }
+
+    function addAIError(msg) {
+      bubble('ai', `
+        <div class="head"><i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي</div>
+        <div style="color:#b00020">${escapeHtml(msg)}</div>
+        <div class="time">${nowTime()}</div>
+      `);
+    }
+
+    function showThinking(show) {
+      thinking.style.display = show ? 'block' : 'none';
+      scrollBottom();
+    }
+
+    // ------- Core send
+    async function sendMessage() {
+      const text = input.value.trim();
+      const actionType = modeSel.value;
+
       if (!text) return;
-      thinkingBubble.style.display = "block";
-      scrollToBottom();
+      // stop any ongoing typing animation
+      if (typingInterval) { clearInterval(typingInterval); typingInterval = null; }
+
+      // show user bubble immediately
+      addUserMessage(text);
+
+      // UI lock
+      input.value = '';
+      sendBtn.disabled = true;
+      showThinking(true);
+
       try {
-        await originalHandle();
-      } finally {
-        thinkingBubble.style.display = "none";
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, actionType })
+        });
+
+        let data;
+        try { data = await res.json(); } catch { data = null; }
+
+        showThinking(false);
+        sendBtn.disabled = false;
+
+        if (!res.ok) {
+          const msg = (data && (data.arabicError || data.error)) || 'عذراً، حدث خطأ غير متوقع.';
+          addAIError(msg);
+          return;
+        }
+
+        // Normalize types from backend
+        const t = (data.type || '').toLowerCase();
+        if (t === 'image' && data.content) {
+          addAIImage(data.content, data.message);
+        } else if (t === 'code' && data.content) {
+          addAICode(data.content, data.message);
+        } else if (t === 'translation' && data.content) {
+          addAITextStreaming(data.content);
+        } else {
+          // text or unknown => stream content field, fallback to message
+          const textOut = data.content || data.message || 'تم.';
+          addAITextStreaming(textOut);
+        }
+
+      } catch (e) {
+        showThinking(false);
+        sendBtn.disabled = false;
+        addAIError('تعذر الاتصال بالخادم. تحقق من الاتصال ثم أعد المحاولة.');
+        console.error(e);
       }
-    };
+    }
 
-    window.showAIMessage = function(content) {
-      appendAIMessage(content);
-    };
+    // ------- Events
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // ------- Optional profile fetch (non-blocking)
+    (async function loadProfile() {
+      try {
+        const r = await fetch('/api/me');
+        if (!r.ok) return;
+        const me = await r.json();
+        if (me && (me.loggedIn || me.name)) {
+          const box = document.getElementById('userProfile');
+          const avatar = document.getElementById('userAvatar');
+          const name = document.getElementById('userName');
+          const plan = document.getElementById('userPlan');
+          if (box) box.style.display = 'flex';
+          if (avatar && me.photo) avatar.src = me.photo;
+          if (name && me.name) name.textContent = me.name;
+          if (plan) plan.textContent = me.plan || 'مجاني';
+        }
+      } catch(_) { /* ignore */ }
+    })();
   </script>
-
-  <script src="index.js"></script>
 </body>
 </html>
