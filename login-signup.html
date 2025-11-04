@@ -3,123 +3,173 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>تسجيل الدخول • GoldenChatAI</title>
+<title>تسجيل الدخول • GoldenArabicAI</title>
 <link rel="icon" href="https://goldenspaceai.space/logo.png" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-  *{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif;}
-  body{
-    background:radial-gradient(circle at 50% 20%,#02122a 0%,#000308 100%);
-    color:#fff;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+  :root {
+    --gold: #d4af37;
+    --gold-dark: #b8860b;
+    --bg: #ffffff;
+    --bg-alt: #faf9f7;
+    --text: #222;
+    --border: #e0e0e0;
+    --radius: 12px;
+    --shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
   }
 
-  .container{
-    background:rgba(0,0,0,0.5);
-    backdrop-filter:blur(12px);
-    border:1px solid rgba(0,255,255,0.2);
-    padding:40px 30px;
-    border-radius:20px;
-    box-shadow:0 0 20px rgba(0,255,255,0.2);
-    text-align:center;
-    width:90%;
-    max-width:400px;
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
   }
 
-  h1{
-    background:linear-gradient(90deg,#00c3ff,#3db2ff,#00e1ff);
-    -webkit-background-clip:text;
-    color:transparent;
-    font-size:24px;
-    margin-bottom:15px;
+  body {
+    background: linear-gradient(180deg, #fffdf7 0%, #f9f7f3 100%);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
   }
 
-  p{
-    color:#cfcfcf;
-    font-size:15px;
-    margin-bottom:25px;
+  .container {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    padding: 40px 35px;
+    width: 95%;
+    max-width: 420px;
+    text-align: center;
   }
 
-  .btn{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    text-decoration:none;
-    color:#fff;
-    background:linear-gradient(90deg,#0078ff,#00ffff);
-    padding:12px 15px;
-    border-radius:10px;
-    margin-bottom:15px;
-    transition:0.3s;
+  .logo {
+    font-size: 2.5em;
+    color: var(--gold-dark);
+    margin-bottom: 10px;
   }
 
-  .btn img{
-    width:22px;
-    height:22px;
-    border-radius:50%;
+  h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: var(--gold-dark);
   }
 
-  .btn:hover{
-    transform:scale(1.03);
-    box-shadow:0 0 10px rgba(0,255,255,0.4);
+  p {
+    color: #555;
+    font-size: 15px;
+    margin-bottom: 30px;
   }
 
-  .divider{
-    margin:15px 0;
-    color:#888;
-    font-size:13px;
-    position:relative;
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #fff;
+    padding: 12px 15px;
+    border-radius: var(--radius);
+    margin-bottom: 15px;
+    font-weight: bold;
+    transition: 0.3s;
   }
 
-  .divider::before,
-  .divider::after{
-    content:"";
-    position:absolute;
-    top:50%;
-    width:40%;
-    height:1px;
-    background:rgba(255,255,255,0.2);
-  }
-  .divider::before{right:60%;}
-  .divider::after{left:60%;}
-
-  footer{
-    margin-top:20px;
-    font-size:13px;
-    color:#aaa;
+  .btn img {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
   }
 
-  footer a{
-    color:#00e1ff;
-    text-decoration:none;
-    transition:0.3s;
+  .btn-google {
+    background: linear-gradient(90deg, #e0c56b, #d4af37);
+    color: #000;
+    border: 1px solid #d4af37;
   }
-  footer a:hover{color:#00ffff;text-decoration:underline;}
+
+  .btn-google:hover {
+    box-shadow: 0 0 10px rgba(212,175,55,0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-github {
+    background: #24292f;
+  }
+
+  .btn-github:hover {
+    background: #3c434b;
+  }
+
+  .btn-free {
+    background: transparent;
+    color: var(--gold-dark);
+    border: 1px solid var(--gold);
+  }
+
+  .btn-free:hover {
+    background: var(--gold);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  .divider {
+    margin: 20px 0;
+    font-size: 14px;
+    color: #777;
+    position: relative;
+  }
+
+  .divider::before, .divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: #ddd;
+  }
+  .divider::before { right: 60%; }
+  .divider::after { left: 60%; }
+
+  footer {
+    margin-top: 25px;
+    font-size: 13px;
+    color: #777;
+  }
+
+  footer a {
+    color: var(--gold-dark);
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  footer a:hover {
+    text-decoration: underline;
+    color: var(--gold);
+  }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>مرحبًا بك في GoldenChatAI</h1>
-  <p>سجّل الدخول للوصول إلى جميع ميزات الذكاء الاصطناعي، ومزامنة رصيدك الذهبي (G).</p>
+  <div class="logo"><i class="fas fa-crown"></i></div>
+  <h1>مرحبًا بك في GoldenArabicAI</h1>
+  <p>سجّل الدخول للوصول إلى جميع ميزات الذكاء الاصطناعي ومزامنة رصيدك الذهبي (G).</p>
 
-  <a href="/auth/google" class="btn">
+  <a href="/auth/google" class="btn btn-google">
     <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
     <span>تسجيل الدخول عبر Google</span>
   </a>
 
-  <a href="/auth/github" class="btn" style="background:linear-gradient(90deg,#24292f,#586069);">
+  <a href="/auth/github" class="btn btn-github">
     <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
     <span>تسجيل الدخول عبر GitHub</span>
   </a>
 
   <div class="divider">أو</div>
 
-  <a href="/goldenchatai-free.html" class="btn" style="background:rgba(0,0,0,0.4);border:1px solid rgba(0,255,255,0.4);">
+  <a href="/goldenchatai-free.html" class="btn btn-free">
     <span>استخدام الدردشة المجانية بدون تسجيل</span>
   </a>
 
@@ -129,9 +179,11 @@
       <a href="https://www.goldenspaceai.space/refund.html" target="_blank">سياسة الاسترجاع</a> • 
       <a href="https://www.goldenspaceai.space/privacy.html" target="_blank">سياسة الخصوصية</a>
     </p>
-    <p>تم التشغيل بواسطة <strong>GoldenSpaceAI</strong></p>
+    <p>© 2025 تم التشغيل بواسطة <strong>GoldenSpaceAI</strong></p>
   </footer>
 </div>
 
+<!-- FontAwesome -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 </body>
 </html>
