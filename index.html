@@ -8,337 +8,189 @@
   <style>
     :root {
       --gold: #d4af37;
-      --gold-light: #f4e4a0;
+      --gold-light: #f9e79f;
       --gold-dark: #b8860b;
-      --dark: #1e1e1e;
-      --light: #f9f9f9;
-      --accent: #fff8dc;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      --radius: 12px;
+      --bg: #ffffff;
+      --bg-alt: #f7f7f7;
+      --text: #1f1f1f;
+      --border: #e0e0e0;
+      --radius: 10px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     * {
       box-sizing: border-box;
+      transition: all 0.2s ease;
     }
 
     body {
       margin: 0;
-      font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
-      background-color: var(--light);
-      color: var(--dark);
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      line-height: 1.6;
+      animation: fadeIn 0.6s ease;
     }
 
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ===== HEADER ===== */
     header {
-      background: linear-gradient(to left, var(--gold-dark), var(--gold));
-      color: white;
-      padding: 15px 20px;
-      text-align: center;
-      font-size: 1.5em;
-      font-weight: bold;
-      box-shadow: var(--shadow);
-      position: relative;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      z-index: 100;
+    }
+
+    .logo-area {
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 10px;
+      font-weight: bold;
+      font-size: 1.3em;
+      color: var(--gold-dark);
     }
 
-    .logo {
-      font-size: 1.8em;
+    .logo-area i {
+      color: var(--gold);
+    }
+
+    .user-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .user-profile {
-      position: absolute;
-      left: 20px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      background: rgba(255,255,255,0.2);
-      padding: 5px 15px;
+      background: var(--bg-alt);
       border-radius: 20px;
+      padding: 5px 10px;
+      border: 1px solid var(--border);
     }
 
     .user-avatar {
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      border: 2px solid white;
+      border: 2px solid var(--gold);
     }
 
     .user-info {
-      font-size: 0.8em;
-    }
-
-    .user-plan {
-      background: var(--gold-dark);
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 0.7em;
-    }
-
-    .chat-area {
-      flex: 1;
       display: flex;
       flex-direction: column;
-      max-width: 1000px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 20px;
+      margin-right: 8px;
+      font-size: 0.8em;
+      text-align: right;
+    }
+
+    .upgrade-btn {
+      background: linear-gradient(to left, var(--gold-dark), var(--gold));
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    .upgrade-btn:hover {
+      box-shadow: 0 0 10px rgba(212,175,55,0.4);
+      transform: translateY(-2px);
+    }
+
+    /* ===== CHAT AREA ===== */
+    .chat-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      margin-top: 60px;
+      margin-bottom: 90px;
       overflow: hidden;
-    }
-
-    .welcome-banner {
-      background: linear-gradient(135deg, var(--gold-light), var(--accent));
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-      box-shadow: var(--shadow);
-      border-right: 5px solid var(--gold);
-    }
-
-    .welcome-banner h2 {
-      margin: 0 0 10px 0;
-      color: var(--dark);
-      font-size: 1.8em;
-    }
-
-    .welcome-banner p {
-      margin: 0;
-      color: #555;
-      font-size: 1.1em;
     }
 
     .chat-container {
-      flex: 1;
+      width: 100%;
+      max-width: 900px;
       display: flex;
       flex-direction: column;
-      background-color: white;
+      background: var(--bg);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
       overflow: hidden;
-      border: 1px solid #eee;
     }
 
     .chat-thread {
       flex: 1;
-      padding: 20px;
       overflow-y: auto;
-      background-color: #fafafa;
+      padding: 20px;
+      background: var(--bg-alt);
+      scroll-behavior: smooth;
     }
 
     .chat-message {
-      margin-bottom: 20px;
-      padding: 15px;
+      margin-bottom: 18px;
+      padding: 14px 16px;
       border-radius: var(--radius);
       max-width: 85%;
-      position: relative;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-      animation: fadeIn 0.3s ease;
+      box-shadow: var(--shadow);
+      word-wrap: break-word;
+      line-height: 1.6;
+      animation: fadeMsg 0.25s ease;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+    @keyframes fadeMsg {
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .user {
-      background: linear-gradient(135deg, var(--gold-light), var(--accent));
-      margin-left: auto;
-      text-align: right;
-      border-bottom-right-radius: 5px;
+    .chat-message.ai {
+      background: #fff;
+      border: 1px solid var(--border);
+      margin-right: auto;
     }
 
-    .ai {
-      background-color: white;
-      margin-right: auto;
-      text-align: right;
-      border-bottom-left-radius: 5px;
-      border: 1px solid #eee;
+    .chat-message.user {
+      background: linear-gradient(135deg, var(--gold-light), #fff8dc);
+      margin-left: auto;
     }
 
     .message-header {
       display: flex;
       align-items: center;
-      margin-bottom: 8px;
+      gap: 8px;
       font-weight: bold;
-      font-size: 0.9em;
+      margin-bottom: 6px;
     }
 
-    .user .message-header {
+    .message-header i {
       color: var(--gold-dark);
-      justify-content: flex-end;
-    }
-
-    .ai .message-header {
-      color: #555;
-    }
-
-    .message-icon {
-      margin-left: 8px;
-      font-size: 1.2em;
     }
 
     .message-time {
       font-size: 0.8em;
-      color: #888;
+      color: #777;
       margin-top: 5px;
-    }
-
-    .typing-indicator {
-      display: none;
-      padding: 15px;
-      background-color: white;
-      border-radius: var(--radius);
-      margin-right: auto;
-      max-width: 85%;
-      border: 1px solid #eee;
-    }
-
-    .typing-dots {
-      display: flex;
-      gap: 5px;
-    }
-
-    .typing-dots span {
-      height: 8px;
-      width: 8px;
-      border-radius: 50%;
-      background-color: #ccc;
-      animation: typing 1.5s infinite;
-    }
-
-    .typing-dots span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .typing-dots span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes typing {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-5px); }
-    }
-
-    .input-section {
-      display: flex;
-      gap: 10px;
-      padding: 20px;
-      background-color: white;
-      border-top: 1px solid #eee;
-    }
-
-    .input-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    textarea {
-      flex: 1;
-      padding: 12px 15px;
-      border-radius: var(--radius);
-      border: 1px solid #ddd;
-      resize: none;
-      height: 60px;
-      font-family: inherit;
-      font-size: 1em;
-      transition: border 0.3s;
-    }
-
-    textarea:focus {
-      outline: none;
-      border-color: var(--gold);
-      box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
-    }
-
-    .input-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    select, button {
-      padding: 10px 15px;
-      border-radius: var(--radius);
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    select {
-      background-color: var(--accent);
-      border: 1px solid #ddd;
-    }
-
-    .send-btn {
-      background: linear-gradient(to left, var(--gold-dark), var(--gold));
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .send-btn:hover {
-      background: linear-gradient(to left, #a0780a, #c9a02b);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    .send-btn:active {
-      transform: translateY(0);
-    }
-
-    .send-btn:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .footer {
-      background-color: #f0f0f0;
-      text-align: center;
-      padding: 15px;
-      font-size: 0.9em;
-      border-top: 1px solid #ccc;
-      color: #555;
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 10px;
-    }
-
-    .footer a {
-      color: #555;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-
-    .footer a:hover {
-      color: var(--gold-dark);
-      text-decoration: underline;
-    }
-
-    .copyright {
-      font-size: 0.85em;
+      text-align: left;
     }
 
     .image-preview {
       max-width: 100%;
       border-radius: 8px;
       margin-top: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow);
     }
 
     .code-block {
@@ -347,90 +199,158 @@
       border-radius: 4px;
       padding: 10px;
       margin: 10px 0;
-      font-family: 'Courier New', monospace;
+      font-family: "Courier New", monospace;
       font-size: 0.9em;
       overflow-x: auto;
     }
 
-    .login-prompt {
-      text-align: center;
-      padding: 40px 20px;
-      color: #666;
-    }
-
-    .login-btn {
-      background: linear-gradient(to left, var(--gold-dark), var(--gold));
-      color: white;
-      padding: 12px 24px;
+    /* ===== TYPING ===== */
+    .typing-indicator {
+      display: none;
+      background: #fff;
       border-radius: var(--radius);
-      text-decoration: none;
-      font-weight: bold;
-      display: inline-block;
-      margin-top: 15px;
+      padding: 15px;
+      border: 1px solid var(--border);
+      max-width: 80%;
+      margin-right: auto;
     }
 
-    /* Responsive design */
+    .typing-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .typing-dots span {
+      width: 8px;
+      height: 8px;
+      background: #bbb;
+      border-radius: 50%;
+      animation: typing 1.5s infinite;
+    }
+
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-4px); }
+    }
+
+    /* ===== INPUT BAR ===== */
+    .input-section {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      padding: 15px 20px;
+    }
+
+    .input-inner {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      resize: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      font-size: 1em;
+      font-family: inherit;
+      background: var(--bg-alt);
+      transition: border 0.3s;
+      height: 70px;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(212,175,55,0.15);
+    }
+
+    .input-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    select, button {
+      border: none;
+      border-radius: var(--radius);
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    select {
+      flex: 1;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      padding: 10px;
+    }
+
+    .send-btn {
+      background: linear-gradient(to left, var(--gold-dark), var(--gold));
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .send-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
-      .chat-area {
-        padding: 10px;
-      }
-      
-      .chat-message {
-        max-width: 95%;
-      }
-      
-      .input-section {
-        flex-direction: column;
-      }
-      
-      .input-actions {
-        width: 100%;
-      }
-      
-      select, button {
-        flex: 1;
-      }
-
-      .user-profile {
-        position: static;
-        justify-content: center;
-        margin-top: 10px;
-      }
-
       header {
         flex-direction: column;
-        padding: 10px;
+        gap: 6px;
+      }
+      .chat-message {
+        max-width: 95%;
       }
     }
   </style>
 </head>
-<body>
 
+<body>
   <header>
-    <i class="fas fa-crown logo"></i>
-    <span>GoldenArabicAI - مساعد الذكاء الاصطناعي الذهبي</span>
-    <div class="user-profile" id="userProfile" style="display: none;">
-      <img src="" alt="Profile" class="user-avatar" id="userAvatar">
-      <div class="user-info">
-        <div id="userName"></div>
-        <div class="user-plan" id="userPlan">مجاني</div>
+    <div class="logo-area">
+      <i class="fas fa-crown"></i>
+      <span>GoldenArabicAI</span>
+    </div>
+    <div class="user-controls">
+      <button class="upgrade-btn" onclick="window.location.href='plans.html'">ترقية الخطة</button>
+      <div class="user-profile" id="userProfile" style="display:none;">
+        <img src="" alt="Profile" class="user-avatar" id="userAvatar">
+        <div class="user-info">
+          <div id="userName"></div>
+          <div class="user-plan" id="userPlan">مجاني</div>
+        </div>
       </div>
     </div>
   </header>
 
-  <div class="chat-area">
-    <div class="welcome-banner">
-      <h2>مرحباً بك في GoldenArabicAI</h2>
-      <p>مساعدك الذكي باللغة العربية، جاهز للإجابة على أسئلتك ومساعدتك في مختلف المهام</p>
-    </div>
-
+  <div class="chat-wrapper">
     <div class="chat-container">
       <div class="chat-thread" id="chatThread">
-        <!-- Messages will appear here -->
         <div class="chat-message ai">
           <div class="message-header">
-            <i class="fas fa-robot message-icon"></i>
-            مساعد الذكاء الاصطناعي
+            <i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي
           </div>
           أهلاً وسهلاً بك! أنا مساعدك الذكي GoldenArabicAI. كيف يمكنني مساعدتك اليوم؟
         </div>
@@ -438,238 +358,33 @@
 
       <div class="typing-indicator" id="typingIndicator">
         <div class="message-header">
-          <i class="fas fa-robot message-icon"></i>
-          مساعد الذكاء الاصطناعي
+          <i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي
         </div>
         <div class="typing-dots">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-
-      <div class="input-section" id="inputSection">
-        <div class="input-container">
-          <textarea id="chatInput" placeholder="اكتب رسالتك هنا..."></textarea>
-          <div class="input-actions">
-            <select id="actionType">
-              <option value="chat">محادثة نصية</option>
-              <option value="image">إنشاء صورة</option>
-              <option value="code">كتابة كود</option>
-              <option value="translate">ترجمة</option>
-            </select>
-            <button class="send-btn" onclick="handleAction()" id="sendBtn">
-              <i class="fas fa-paper-plane"></i>
-              إرسال
-            </button>
-          </div>
+          <span></span><span></span><span></span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="footer">
-    <div class="footer-links">
-      <a href="login-signup.html"><i class="fas fa-user"></i> تسجيل الدخول</a>
-      <a href="nplans.html"><i class="fas fa-crown"></i> الترقية</a>
-      <a href="terms.html"><i class="fas fa-file-contract"></i> الشروط</a>
-      <a href="privacy.html"><i class="fas fa-shield-alt"></i> الخصوصية</a>
-      <a href="refund.html"><i class="fas fa-undo"></i> الاسترجاع</a>
-    </div>
-    <div class="copyright">
-      GoldenArabicAI &copy; 2023 - جميع الحقوق محفوظة
+  <div class="input-section" id="inputSection">
+    <div class="input-inner">
+      <textarea id="chatInput" placeholder="اكتب رسالتك هنا..."></textarea>
+      <div class="input-actions">
+        <select id="actionType">
+          <option value="chat">محادثة نصية</option>
+          <option value="image">إنشاء صورة</option>
+          <option value="code">كتابة كود</option>
+          <option value="translate">ترجمة</option>
+        </select>
+        <button class="send-btn" id="sendBtn" onclick="handleAction()">
+          <i class="fas fa-paper-plane"></i> إرسال
+        </button>
+      </div>
     </div>
   </div>
 
-  <script>
-    // DOM Elements
-    const chatThread = document.getElementById("chatThread");
-    const chatInput = document.getElementById("chatInput");
-    const actionType = document.getElementById("actionType");
-    const typingIndicator = document.getElementById("typingIndicator");
-    const sendBtn = document.getElementById("sendBtn");
-    const userProfile = document.getElementById("userProfile");
-    const userName = document.getElementById("userName");
-    const userAvatar = document.getElementById("userAvatar");
-    const inputSection = document.getElementById("inputSection");
-
-    // Check user authentication on load
-    checkAuthentication();
-
-    // دالة للتحقق من المصادقة
-    async function checkAuthentication() {
-      try {
-        const response = await fetch('/api/me');
-        const userData = await response.json();
-        
-        if (userData.loggedIn) {
-          // User is logged in
-          userProfile.style.display = 'flex';
-          userName.textContent = userData.name;
-          userAvatar.src = userData.photo || '/default-avatar.png';
-          userPlan.textContent = userData.plan === 'free' ? 'مجاني' : userData.plan;
-        } else {
-          // User is not logged in - show login prompt
-          showLoginPrompt();
-        }
-      } catch (error) {
-        console.error('Authentication check failed:', error);
-        showLoginPrompt();
-      }
-    }
-
-    // دالة لعرض رسالة تسجيل الدخول
-    function showLoginPrompt() {
-      chatThread.innerHTML = `
-        <div class="login-prompt">
-          <i class="fas fa-robot" style="font-size: 3em; color: #d4af37; margin-bottom: 20px;"></i>
-          <h3>يرجى تسجيل الدخول للاستفادة من الذكاء الاصطناعي</h3>
-          <p>سجل الدخول للبدء في المحادثة مع مساعدنا الذكي</p>
-          <a href="login-signup.html" class="login-btn">
-            <i class="fas fa-sign-in-alt"></i>
-            تسجيل الدخول
-          </a>
-        </div>
-      `;
-      inputSection.style.display = 'none';
-    }
-
-    // دالة لإضافة رسالة جديدة إلى المحادثة
-    function appendMessage(sender, text, type = "chat", imageUrl = null, code = null) {
-      const msg = document.createElement("div");
-      msg.className = `chat-message ${sender}`;
-      
-      const now = new Date();
-      const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-      
-      let icon = "fas fa-user";
-      let senderName = "أنت";
-      
-      if (sender === "ai") {
-        icon = "fas fa-robot";
-        senderName = "مساعد الذكاء الاصطناعي";
-      }
-      
-      let content = text;
-      
-      if (type === "image" && imageUrl) {
-        content = `${text}<br><img src="${imageUrl}" alt="الصورة المولدة" class="image-preview">`;
-      } else if (type === "code" && code) {
-        content = `${text}<pre class="code-block">${escapeHtml(code)}</pre>`;
-      }
-      
-      msg.innerHTML = `
-        <div class="message-header">
-          <i class="${icon} message-icon"></i>
-          ${senderName}
-        </div>
-        <div class="message-content">${content}</div>
-        <div class="message-time">${timeString}</div>
-      `;
-      
-      chatThread.appendChild(msg);
-      chatThread.scrollTop = chatThread.scrollHeight;
-    }
-
-    // دالة للهروب من HTML
-    function escapeHtml(unsafe) {
-      return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    // دالة التعامل مع الإجراءات - الاتصال بالخادم الحقيقي
-    async function handleAction() {
-      const text = chatInput.value.trim();
-      const action = actionType.value;
-
-      if (!text) {
-        alert("يرجى كتابة رسالة قبل الإرسال");
-        return;
-      }
-
-      // تعطيل الزر أثناء الإرسال
-      sendBtn.disabled = true;
-      sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
-
-      // إضافة رسالة المستخدم
-      appendMessage("user", text, action);
-
-      // مسح حقل الإدخال
-      chatInput.value = "";
-
-      try {
-        // إظهار مؤشر الكتابة
-        typingIndicator.style.display = 'block';
-        chatThread.scrollTop = chatThread.scrollHeight;
-
-        // إرسال الطلب إلى الخادم
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: text,
-            actionType: action
-          })
-        });
-
-        const data = await response.json();
-
-        // إخفاء مؤشر الكتابة
-        typingIndicator.style.display = 'none';
-
-        if (!response.ok) {
-          throw new Error(data.arabicError || data.error || 'حدث خطأ غير متوقع');
-        }
-
-        // إضافة رد الذكاء الاصطناعي بناءً على نوع الإجراء
-        if (action === "image" && data.type === "image") {
-          appendMessage("ai", data.message || "تم إنشاء الصورة بنجاح", "image", data.content);
-        } else if (action === "code" && data.type === "code") {
-          appendMessage("ai", data.message || "تم إنشاء الكود بنجاح", "code", null, data.content);
-        } else if (action === "translate" && data.type === "translation") {
-          appendMessage("ai", data.content, "translate");
-        } else {
-          appendMessage("ai", data.content, "chat");
-        }
-
-      } catch (error) {
-        // إخفاء مؤشر الكتابة في حالة الخطأ
-        typingIndicator.style.display = 'none';
-        
-        // عرض رسالة الخطأ
-        appendMessage("ai", `عذراً، حدث خطأ: ${error.message}`, "chat");
-        console.error('API Error:', error);
-      } finally {
-        // إعادة تمكين الزر
-        sendBtn.disabled = false;
-        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال';
-      }
-    }
-
-    // السماح بالإرسال بالضغط على Enter
-    chatInput.addEventListener("keydown", function(event) {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        if (!sendBtn.disabled) {
-          handleAction();
-        }
-      }
-    });
-
-    // التركيز على حقل الإدخال عند تحميل الصفحة
-    window.onload = function() {
-      chatInput.focus();
-    };
-
-    // تحديث حالة المستخدم كل 30 ثانية
-    setInterval(checkAuthentication, 30000);
-  </script>
-
+  <!-- Keep your existing JavaScript below this line -->
+  <script src="index.js"></script>
 </body>
 </html>
